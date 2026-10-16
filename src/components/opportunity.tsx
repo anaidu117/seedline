@@ -5,7 +5,8 @@ import { valueLabel } from '../../shared/vocab.ts';
 import { amountLine } from '../../shared/money.ts';
 import { daysBetween, formatDate, relativeDays, type IsoDate } from '../../shared/dates.ts';
 import { ramp, readinessT, urgencyT } from '../../shared/ramp.ts';
-import { readinessText, type Match, type Opportunity, type Readiness } from '../../shared/matching/index.ts';
+import { foundersLikeYouLine, readinessText, type Match, type Opportunity, type Readiness } from '../../shared/matching/index.ts';
+import { NOT_DISCLOSED } from '../../shared/money.ts';
 import { isStale } from '../lib/opportunities.ts';
 
 /** Deadline chip. Its tint and dot come from ramp() (amber means close); the text stays navy for contrast. */
@@ -67,9 +68,24 @@ export function MetaLine({ o }: { o: Opportunity }) {
   );
 }
 
+/** Two separate lines, never combined or averaged (spec section 8). */
+export function ResultsLines({ o, fly }: { o: Opportunity; fly: { reported: number; won: number } | null | undefined | 'signin' }) {
+  const past = o.past_results_text || o.past_results_count != null
+    ? [o.past_results_text, o.past_results_count != null ? `${o.past_results_count} awarded${o.past_results_year ? ` in ${o.past_results_year}` : ''}.` : ''].filter(Boolean).join(' ')
+    : `${NOT_DISCLOSED}.`;
+  return (
+    <div className="text-[length:var(--text-meta)]">
+      <p><span className="font-semibold">Past results, from the organizer: </span>{past}</p>
+      {fly !== undefined && <p><span className="font-semibold">Founders like you, from Seedline: </span>{fly === 'signin' ? 'Sign in to see results from founders at your stage and in your sector.' : foundersLikeYouLine(fly).text}</p>}
+    </div>
+  );
+}
+
 /** The large Apply now card. */
-export function OpportunityCard({ match, today, readiness, actions, delay }: {
+export function OpportunityCard({ match, today, readiness, actions, delay, fly }: {
   match: Match; today: IsoDate; readiness?: Readiness; actions?: ReactNode; delay?: number;
+  /** Founders-like-you counts for this listing (null below the threshold); omit where the viewer has no profile. */
+  fly?: { reported: number; won: number } | null | 'signin';
 }) {
   const o = match.opportunity;
   return (
@@ -83,6 +99,7 @@ export function OpportunityCard({ match, today, readiness, actions, delay }: {
         <p className="mt-2"><span className="font-semibold">Why it fits: </span>{match.passed.map((r) => r.requirement).join('. ')}.</p>
       )}
       {readiness && <div className="mt-2"><ReadinessLine r={readiness} /></div>}
+      <div className="mt-2"><ResultsLines o={o} fly={fly} /></div>
       <div className="mt-2"><SourceLine o={o} /></div>
       {actions && <div className="mt-3 flex flex-wrap gap-2">{actions}</div>}
     </article>

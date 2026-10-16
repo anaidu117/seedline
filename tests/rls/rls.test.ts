@@ -222,6 +222,23 @@ describe('founders like you threshold in the database', () => {
     await withDb((db) => db.query(`insert into public.applications (user_id, opportunity_id, status) values ($1, $2, 'won')`, [ids[9], opp.id]));
     const ten = await a.client.rpc('founders_like_you', { opp: opp.id, p_stage: 'prototype', p_sector: 'software' });
     expect(ten.data).toEqual([{ reported: 10, won: 4 }]);
+    const many = await a.client.rpc('founders_like_you_many', { opps: [opp.id, oppVerified.id], p_stage: 'prototype', p_sector: 'software' });
+    expect(many.data).toEqual([{ opportunity_id: opp.id, reported: 10, won: 4 }]);
+  });
+
+  it('batched version returns nothing at 9 reports', async () => {
+    const opp = await insertOpportunity();
+    await withDb(async (db) => {
+      for (let i = 0; i < 9; i++) {
+        const u = await db.query<{ id: string }>(`insert into auth.users (id, email, aud, role) values (gen_random_uuid(), $1, 'authenticated', 'authenticated') returning id`, [`flym-${Date.now()}-${i}@test.seedline.local`]);
+        await db.query(`insert into public.profiles (user_id, stage, sector) values ($1, 'idea', 'fintech')`, [u.rows[0].id]);
+        await db.query(`insert into public.applications (user_id, opportunity_id, status) values ($1, $2, 'won')`, [u.rows[0].id, opp.id]);
+      }
+    });
+    const r = await a.client.rpc('founders_like_you_many', { opps: [opp.id], p_stage: 'idea', p_sector: 'fintech' });
+    expect(r.error).toBeNull();
+    expect(r.data).toEqual([]);
+    expect((await anonClient().rpc('founders_like_you_many', { opps: [opp.id], p_stage: 'idea', p_sector: 'fintech' })).error).not.toBeNull();
   });
 
   it('is not callable anonymously', async () => {

@@ -40,9 +40,11 @@ Plan approved 2026-10-15 with every suggested default in PLAN.md section 5. Admi
 
 - **Step 20: accessibility and mobile pass, measured.** `tests/e2e/a11y.spec.ts` visits 29 routes (public, founder, admin) at 375x812 and 1280x800 and fails on: any horizontal overflow, any tap target under 44px (links inside a sentence are exempt, per WCAG 2.5.8), any element reached by Tab without a visible focus ring, any axe color-contrast violation, and rendered copy with em dashes, percentages, all-caps words (acronyms allowed) or uppercase styling. Found and fixed: card, map, list and back links under 44px; date inputs with no focus ring; amber used outside deadlines (now only through `ramp()`); the deadline chip tint was hand-picked (now `ramp()`). Final: 6 of 6 sweep runs pass. `tests/e2e/founder-flow.spec.ts` runs the whole founder flow in a browser, including a founder being refused at `/admin`: passes. `npm run contrast` 20 of 20 pairs. `npm run check:copy` 91 files clean.
 
-## Final numbers (from the last full run)
+- **QA fix after step 20:** "Past results and founders-like-you are separate lines on every card" was only true on the detail page. Apply now cards now show both lines, with founders-like-you fetched for all cards at once by `founders_like_you_many` (same 10-report threshold in SQL, tested at 9 and 10). Preview cards say to sign in for founders-like-you, since anonymous visitors cannot query it. The browser flow asserts both lines on every plan card.
+
+## Final numbers (from the last full run, `npm run qa`)
 - `npm test`: 110 of 110 (8 files)
-- `npm run test:db`: 90 of 90 (8 files: RLS, storage, enums, metrics, CSV import, emails and check-ins, share links, submissions and claims)
+- `npm run test:db`: 91 of 91 (8 files: RLS, storage, enums, metrics, CSV import, emails and check-ins, share links, submissions and claims)
 - `npm run test:e2e`: 7 passed, 1 skipped by design (the founder flow runs at laptop width only)
 - `npm run build`: passes; CSP has no `unsafe-` directive
 - Local database reset to the clean seed afterwards: 5 EXAMPLE rows, all unverified, no users.

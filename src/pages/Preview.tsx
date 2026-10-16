@@ -60,7 +60,7 @@ export default function Preview() {
       {top.length > 0 && (
         <section className="mt-8 flex flex-col gap-4">
           <h2 className="text-[length:var(--text-section)]">Your top matches</h2>
-          {top.map((m) => <OpportunityCard key={m.opportunity.slug} match={m} today={today} />)}
+          {top.map((m) => <OpportunityCard key={m.opportunity.slug} match={m} today={today} fly="signin" />)}
         </section>
       )}
 

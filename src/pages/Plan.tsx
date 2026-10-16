@@ -4,6 +4,7 @@ import { valueLabel } from '../../shared/vocab.ts';
 import { formatUsd } from '../../shared/money.ts';
 import { layerFor, materialsReadiness, type Match } from '../../shared/matching/index.ts';
 import { useAuth } from '../lib/auth.tsx';
+import { supabase } from '../lib/supabase.ts';
 import { saveToApplications, useFounder, type FounderData } from '../lib/founder.ts';
 import { Alert, Loading, Page, SectionTitle } from '../components/ui.tsx';
 import { CompactRow, OpportunityCard } from '../components/opportunity.tsx';
@@ -49,6 +50,15 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
   const { plan, totals, unlock, unlocked, today, materials, applications, firstPlan } = data;
   const shown = useCountUp(totals.total, firstPlan);
   const [busy, setBusy] = useState('');
+  // Founders like you for every card in one call. The database returns nothing below 10 reports.
+  const [fly, setFly] = useState<Map<string, { reported: number; won: number }> | null>(null);
+  const ids = plan.apply_now.map((m) => m.opportunity.id!).join(',');
+  useEffect(() => {
+    const { stage, sector } = data.profile;
+    if (!stage || !sector || !ids) { setFly(new Map()); return; }
+    supabase.rpc('founders_like_you_many', { opps: ids.split(','), p_stage: stage, p_sector: sector })
+      .then(({ data: rows }) => setFly(new Map((rows ?? []).map((r: { opportunity_id: string; reported: number; won: number }) => [r.opportunity_id, r]))));
+  }, [ids, data.profile.stage, data.profile.sector]);
   const bySlug = new Map(data.opportunities.map((o) => [o.slug, o]));
 
   // Equity programs are listed on their own and never added to the total (spec 7.1).
@@ -122,7 +132,8 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
             <p className="text-muted">Nothing is open for you right now. Check Coming up below, and fill in your profile to unlock more.</p>
           ) : applyNow.map((m, i) => (
             <OpportunityCard key={m.opportunity.slug} match={m} today={today} delay={firstPlan ? i * 70 : undefined}
-              readiness={materialsReadiness(m.opportunity.materials_required, materials)} actions={actions(m)} />
+              readiness={materialsReadiness(m.opportunity.materials_required, materials)} actions={actions(m)}
+              fly={fly ? (fly.get(m.opportunity.id!) ?? null) : undefined} />
           ))}
         </section>
 

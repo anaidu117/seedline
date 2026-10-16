@@ -39,6 +39,14 @@ test('a new visitor goes from intake to a full plan and through every founder pa
   await expect(page.getByRole('heading', { name: /Apply now/ })).toBeVisible();
   for (const h of ['Coming up', 'Not ready yet', 'Needs info']) await expect(page.getByRole('heading', { name: new RegExp(h) })).toBeVisible();
   await expect(page.getByText('Information only, not legal or investment advice.').first()).toBeVisible();
+  // Every card shows past results and founders like you as two separate lines.
+  const cards = page.locator('article');
+  const n = await cards.count();
+  expect(n).toBeGreaterThan(0);
+  for (let i = 0; i < n; i++) {
+    await expect(cards.nth(i).getByText('Past results, from the organizer:')).toBeVisible();
+    await expect(cards.nth(i).getByText('Founders like you, from Seedline:')).toBeVisible();
+  }
   await page.getByRole('button', { name: 'Save to my applications' }).first().click();
   await expect(page.getByRole('link', { name: 'Saved to applications' }).first()).toBeVisible();
 
