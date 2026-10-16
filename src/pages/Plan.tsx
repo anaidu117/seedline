@@ -9,6 +9,7 @@ import { Alert, Loading, Page, SectionTitle } from '../components/ui.tsx';
 import { CompactRow, OpportunityCard } from '../components/opportunity.tsx';
 import { Disclaimer } from '../components/Disclaimer.tsx';
 import { RequireAuth } from '../components/RequireAuth.tsx';
+import { SharePanel } from '../components/SharePanel.tsx';
 
 export default function PlanPage() {
   return <RequireAuth><PlanInner /></RequireAuth>;
@@ -179,6 +180,7 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
           {plan.not_eligible.length > 0 && <p>{plan.not_eligible.length} program{plan.not_eligible.length === 1 ? " doesn't" : "s don't"} fit your profile.</p>}
           {plan.later.length > 0 && <p>{plan.later.length} more open later than 9 months from now.</p>}
         </div>
+        <SharePanel userId={userId} />
         <Disclaimer />
       </div>
     </div>

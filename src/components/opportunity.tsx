@@ -41,11 +41,11 @@ export function ReadinessLine({ r }: { r: Readiness }) {
 
 /** Source and last-verified date, shown on every opportunity (spec section 8). */
 export function SourceLine({ o }: { o: Pick<Opportunity, 'source_url' | 'last_verified_at' | 'verification_status'> }) {
-  const verified = o.last_verified_at ? new Date(o.last_verified_at).toLocaleDateString('en-US', { dateStyle: 'medium' }) : 'Not verified';
+  const verified = o.last_verified_at ? `Last verified ${new Date(o.last_verified_at).toLocaleDateString('en-US', { dateStyle: 'medium' })}` : 'Verification date not recorded';
   return (
     <p className="text-[length:var(--text-meta)] text-muted">
       Source: <a href={o.source_url} target="_blank" rel="noreferrer noopener" className="break-all">{hostOf(o.source_url)}</a>
-      {' · '}Last verified {verified}
+      {' · '}{verified}
       {o.verification_status === 'organizer_verified' && <span className="chip ml-2 bg-blue-tint text-navy">Verified by organizer</span>}
       {isStale(o) && <span className="chip ml-2 bg-amber-tint text-amber-ink">May be outdated</span>}
     </p>

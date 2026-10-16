@@ -18,6 +18,7 @@ import ApplicationsPage from './pages/Applications.tsx';
 import CalendarPage from './pages/Calendar.tsx';
 import Checkin from './pages/Checkin.tsx';
 import Unsubscribe from './pages/Unsubscribe.tsx';
+import SharePage from './pages/Share.tsx';
 import { AdminLayout } from './pages/admin/AdminLayout.tsx';
 import OpportunityList from './pages/admin/OpportunityList.tsx';
 import OpportunityForm from './pages/admin/OpportunityForm.tsx';
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
         { path: '/calendar', element: <CalendarPage /> },
         { path: '/checkin', element: <Checkin /> },
         { path: '/unsubscribe', element: <Unsubscribe /> },
+        { path: '/share/:token', element: <SharePage /> },
         {
           path: '/admin',
           element: <AdminLayout />,
