@@ -35,7 +35,7 @@ export default function Landing() {
 
       {totals && totals.count > 0 && items.length > 0 && (
         <section aria-labelledby="example" className="mt-12">
-          <h2 id="example" className="text-[length:var(--text-meta)] font-sans font-semibold text-muted">What a plan looks like, for an example founder (a UNC graduate student in North Carolina with a health prototype)</h2>
+          <h2 id="example" className="text-[length:var(--text-meta)] font-sans font-semibold text-muted">What a plan looks like, for an example founder (a graduate student at a North Carolina university, with a health prototype)</h2>
           <div className="mt-3 grid gap-6 rounded-[var(--radius-card)] border border-line p-5 md:grid-cols-[16rem_1fr] md:items-end md:p-7">
             <div>
               <p className="text-muted">Up to</p>
