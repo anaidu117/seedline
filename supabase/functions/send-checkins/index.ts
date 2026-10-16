@@ -30,7 +30,8 @@ Deno.serve(async (req) => {
     if (!allowed.has(a.user_id)) continue;
     report.checked++;
     const row = a.opportunity as unknown as Record<string, unknown> | null;
-    if (!row) continue;
+    // Never name a listing founders can no longer see (unverified again, or archived).
+    if (!row || row.verification_status === 'unverified' || row.archived) continue;
     const o = toOpportunity(row);
     // Use the stored dates (not a projected next cycle): the founder saved this cycle.
     const w = { closes: o.deadline_at, decision: o.decision_at };

@@ -132,6 +132,23 @@ describe('check-in links', () => {
   });
 });
 
+describe('hidden listings', () => {
+  it('get no check-in email once they are unverified or archived', async () => {
+    const hidden = await insertOpportunity({ name: 'EXAMPLE: Hidden check-in', opens_at: addDays(today, -40), deadline_at: addDays(today, -5) });
+    const archived = await insertOpportunity({ name: 'EXAMPLE: Archived check-in', opens_at: addDays(today, -40), deadline_at: addDays(today, -5) });
+    await founder.client.from('applications').insert([
+      { user_id: founder.id, opportunity_id: hidden.id, status: 'planning' },
+      { user_id: founder.id, opportunity_id: archived.id, status: 'planning' },
+    ]);
+    await adminClient().from('opportunities').update({ verification_status: 'unverified' }).eq('id', hidden.id);
+    await adminClient().from('opportunities').update({ archived: true }).eq('id', archived.id);
+    await cron('send-checkins');
+    const subjects = (await inbox(founder.email)).map((m) => m.Subject);
+    expect(subjects).not.toContain('Did you apply to EXAMPLE: Hidden check-in?');
+    expect(subjects).not.toContain('Did you apply to EXAMPLE: Archived check-in?');
+  });
+});
+
 describe('reminders', () => {
   it('send once at 14 days and once at 3 days before a saved deadline', async () => {
     const opp = await insertOpportunity({ name: 'EXAMPLE: Reminder test', opens_at: addDays(today, -10), deadline_at: addDays(today, 10) });
