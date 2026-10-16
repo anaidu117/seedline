@@ -5,8 +5,11 @@ Plan approved 2026-10-15 with every suggested default in PLAN.md section 5. Admi
 ## Done and verified
 - **Step 1: vocabulary and scaffold.** `shared/vocab.ts` with every enum, profile field (label, question, layer, why we ask), CSV columns and `assertKnownKeys`. `npm test`: 13 of 13 passing. `npm run build` passes. Dev server renders the landing page; Bricolage Grotesque and Figtree load, and Figtree tabular figures measured equal width in the browser.
 
+- **Step 2: database.** Migrations in `supabase/migrations/`: enums generated from vocab (`scripts/gen-enum-sql.ts`), 18 tables all with RLS, private `materials` bucket with owner-folder policies, guard trigger for organizer edits, outcome snapshot trigger, `founders_like_you` with the 10-report threshold enforced in SQL, `rotate_calendar_token`. `npx supabase db reset` applies cleanly. `npm run test:db`: 47 of 47 passing (enum match, columns match vocab, founder A vs B on 8 tables plus storage, anonymous access, non-admin access, admin cannot read profiles or founder groups, organizer scope, threshold at 9 and 10). Found and fixed during testing: Supabase grants `anon` execute on new functions by default; revoked.
+- **Risk R1 (Edge Functions importing `shared/`):** works under `npx supabase functions serve` (the `health` function returns values read from `shared/vocab.ts`). Deploy bundling can only be confirmed at the deploy step.
+
 ## Next
-- Step 2: database schema, enums matching vocab, RLS policies, RLS tests.
+- Step 3: matching engine.
 
 ## Open questions
 - None.
