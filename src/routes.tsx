@@ -9,6 +9,11 @@ import Start from './pages/Start.tsx';
 import Preview from './pages/Preview.tsx';
 import PlanPage from './pages/Plan.tsx';
 import ProfilePage from './pages/Profile.tsx';
+import OpportunityPage from './pages/Opportunity.tsx';
+import MaterialsPage from './pages/Materials.tsx';
+import AnswersPage from './pages/Answers.tsx';
+import DraftPage from './pages/Draft.tsx';
+import ApplicationsPage from './pages/Applications.tsx';
 import { AdminLayout } from './pages/admin/AdminLayout.tsx';
 import OpportunityList from './pages/admin/OpportunityList.tsx';
 import OpportunityForm from './pages/admin/OpportunityForm.tsx';
@@ -32,6 +37,11 @@ export const router = createBrowserRouter([
         { path: '/preview', element: <Preview /> },
         { path: '/plan', element: <PlanPage /> },
         { path: '/profile', element: <ProfilePage /> },
+        { path: '/opportunity/:slug', element: <OpportunityPage /> },
+        { path: '/materials', element: <MaterialsPage /> },
+        { path: '/answers', element: <AnswersPage /> },
+        { path: '/draft/:slug', element: <DraftPage /> },
+        { path: '/applications', element: <ApplicationsPage /> },
         {
           path: '/admin',
           element: <AdminLayout />,

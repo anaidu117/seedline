@@ -19,8 +19,14 @@ Plan approved 2026-10-15 with every suggested default in PLAN.md section 5. Admi
 - **Step 7: magic link and plan page** (`/plan`). Verified: magic link from the local inbox lands on `/plan`; Layer 0 answers moved into the new profile; total band ($15,000, $5,000 open now, $10,000 opening later), Apply now card with fit reasons, materials count, source and last verified, Coming up, targeted section, "2 programs don't fit your profile"; Save to my applications works. Found and fixed: `plan_generated` could be recorded twice when two loads race; the first snapshot is now an insert only one load can win.
 - **Step 8: profile layers, milestones, Newly unlocked** (`/profile`). Verified: unfilled layers listed with what each unlocks (no percentages); marking "Ran a first pilot" and "Incorporated" changed nothing eligible and showed no Newly unlocked; answering incorporation state NC then showed "Newly unlocked: EXAMPLE: State matching grant"; database shows stage raised to pilot_users and incorporated true. Founder groups with "prefer not to say" and "remove my answer", email preference toggles.
 
+- **Step 9: opportunity detail** (`/opportunity/:slug`). Verified: fit reasons, materials count, dates, money, "Past results, from the organizer" and "Founders like you, from Seedline" as two separate lines ("Not enough data yet."), past winners summary "Last 2 years: 3 winners, 2 in health or biotech.", calendar buttons, claim link, works signed out. Unverified listings return the 404 page (RLS returns nothing).
+- **Step 10: materials and answers.** Verified: file upload ("1 of 10 materials added."), link save ("2 of 10"), "Needed by N programs on your plan"; answer bank saves three lengths with live word counts. `tests/rls/storage.test.ts`: bucket not public, owner signed URL works, another founder cannot sign, a 1-second signed URL fails after expiry (3 of 3).
+- Found and fixed during step 10: Supabase fires an auth event when the tab regains focus; the answer bank reloaded on it and overwrote what the founder had typed (so a save did nothing). The auth provider now keeps the same session object when nothing changed, and pages key their loads on the user ID.
+- **Step 11: draft view** (`/draft/:slug`). Verified: problem filled from the medium version (long is over 150 words), solution from the short version, missing answer flagged, unmapped question flagged, live count "34 of 30 words, 4 over the limit", draft persists after reload. 7 unit tests in `shared/drafts/fitAnswer.test.ts`.
+- **Step 12: applications tracker** (`/applications`). Verified: status change to Won, amount "$2,500" saved, database snapshot stage pilot_users and sector health_biotech at application, `reported_at` set, events written.
+
 ## Next
-- Step 9: opportunity detail page.
+- Step 13: calendar view, private feed.
 
 ## Open questions
 - None.
