@@ -8,6 +8,7 @@ import AuthCallback from './pages/AuthCallback.tsx';
 import Start from './pages/Start.tsx';
 import Preview from './pages/Preview.tsx';
 import PlanPage from './pages/Plan.tsx';
+import ProfilePage from './pages/Profile.tsx';
 import { AdminLayout } from './pages/admin/AdminLayout.tsx';
 import OpportunityList from './pages/admin/OpportunityList.tsx';
 import OpportunityForm from './pages/admin/OpportunityForm.tsx';
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
         { path: '/start', element: <Start /> },
         { path: '/preview', element: <Preview /> },
         { path: '/plan', element: <PlanPage /> },
+        { path: '/profile', element: <ProfilePage /> },
         {
           path: '/admin',
           element: <AdminLayout />,
