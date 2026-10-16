@@ -51,6 +51,20 @@ Plan approved 2026-10-15 with every suggested default in PLAN.md section 5. Admi
 6. **Unknown URLs returned 200.** `_redirects` now lists each route, `404.html` is generated, so unknown paths get a real 404 on Pages (verified with `wrangler pages dev`: routes 200, unknown 404). Unit test keeps `_redirects` in sync with the router.
 7. **Smaller fixes:** nav shows founder pages only when signed in, with an Admin link for admins; Escape closes the mobile menu and returns focus; map filters fold away on phones; landing copy no longer says the ambiguous "No equity, no fees"; fit reasons use the founder's own answer; Not ready yet rows with unanswered questions get "Answer in profile". `tests/e2e/navigation.spec.ts` covers the first three.
 
+## Design refresh (in progress, mockup awaiting approval)
+Mockup: `design/mockups/b-plus-c.html` (open at http://localhost:5173/design/mockups/b-plus-c.html with `npm run dev`). Nothing in `src/` has changed for the design yet.
+Decisions so far (answered by you):
+- Direction: B (bold Carolina blue blocks) plus C (9-month deadline timeline on the plan, colored by `ramp()`).
+- Hero shapes: allowed as brand texture, navy, Carolina blue and light blue only. Amber stays reserved for deadlines and wins.
+- How it works: a numbered path in the timeline's style, not a three-card grid.
+- Plan motion: stays bright; the total counts up and the rail grows (0.6s, off with reduced motion). No dark panel.
+- Analytics: internal events only, as the spec says. No third-party analytics.
+- Type chips: two groups. Money awards (university, state and federal grants, pitch competitions) solid navy; programs (fellowships, accelerators, showcases) light blue.
+- Rollout after approval: all founder and public pages. Admin keeps its plain layout.
+- Link preview image: 1200 by 630, built from the hero, no numbers.
+- Fonts: keep Bricolage Grotesque and Figtree.
+Handbook items applied for real (no visual change): HSTS header and `sitemap.xml` (verified on `wrangler pages dev`: both present, routes 200, unknown 404).
+
 ## Final numbers (from the last full run, `npm run qa`)
 - `npm test`: 115 of 115 (9 files)
 - `npm run check:functions`: all 12 Edge Functions type-check

@@ -57,8 +57,9 @@
 
   /* Type chips (categorical, not ordinal) */
   .chip { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:3px 10px; font-size:13px; font-weight:700; }
-  .chip.type { background:var(--navy); color:#fff; }
-  .chip.type2 { background:var(--tint); color:var(--navy); }
+  /* Type chips, two groups (decided): money awards in solid navy, programs in light blue. */
+  .chip.type { background:var(--navy); color:#fff; }       /* university_grant, pitch_competition, state_grant, federal_grant */
+  .chip.type2 { background:var(--tint); color:var(--navy); } /* fellowship, accelerator, showcase_conference */
 
   /* C: the timeline */
   .tl { position:relative; padding-top:48px; }
@@ -169,7 +170,7 @@
     <div class="tl" data-timeline="plan" style="padding-bottom:40px"></div>
   </section>
   <section class="wrap" style="padding-top:22px;padding-bottom:10px">
-    <h2 style="font-size:34px;margin-bottom:16px">Apply now <span class="meta" style="font-family:var(--sans);font-size:18px;font-weight:600">(1)</span></h2>
+    <div style="display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;align-items:baseline;margin-bottom:16px"><h2 style="font-size:34px">Apply now <span class="meta" style="font-family:var(--sans);font-size:18px;font-weight:600">(1)</span></h2><span class="fine"><span class="chip type">Money award</span> grants and competitions · <span class="chip type2">Program</span> fellowships, accelerators, showcases</span></div>
     <article class="card feature">
       <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap">
         <div><span class="chip type">University grant</span><h3 style="font-size:28px;margin-top:10px">EXAMPLE: Campus seed grant</h3><p class="meta" style="margin-top:4px">EXAMPLE: University venture office · $1,000 to $5,000</p></div>
@@ -186,7 +187,7 @@
     <h2 style="font-size:28px;margin-bottom:6px">Coming up <span class="meta" style="font-family:var(--sans);font-size:16px;font-weight:600">(1)</span></h2>
     <div class="row">
       <div class="date"><span>Feb</span><b>1</b></div>
-      <div style="flex:1"><span class="chip type2">Pitch competition</span><p style="font-weight:700;font-size:18px;margin-top:6px">EXAMPLE: Regional pitch night</p><p class="meta">Up to $10,000 · Opens Feb 1, 2027 (expected, from last cycle)</p>
+      <div style="flex:1"><span class="chip type">Pitch competition</span><p style="font-weight:700;font-size:18px;margin-top:6px">EXAMPLE: Regional pitch night</p><p class="meta">Up to $10,000 · Opens Feb 1, 2027 (expected, from last cycle)</p>
         <p class="fine" style="margin-top:6px">Past results, from the organizer: Not disclosed. · Founders like you, from Seedline: Not enough data yet.</p>
         <p class="fine">Source: <a href="#">example.com</a> · Last verified Oct 15, 2026</p></div>
     </div>
@@ -227,6 +228,20 @@
     </article>
   </section>
   <div class="footer">Information only, not legal or investment advice. Always confirm details with the organizer.</div>
+</div>
+</div>
+
+<!-- ============ 4. Share image ============ -->
+<div>
+<p class="cap">4 · Link preview image, shown at half size (real file 1200 by 630)</p>
+<div class="screen" style="width:600px;max-width:100%">
+  <div class="block" style="height:315px;padding:36px 36px;display:flex;flex-direction:column;justify-content:space-between">
+    <span class="shape" style="width:260px;height:260px;right:-60px;top:-90px;background:var(--navy)"></span>
+    <span class="shape" style="width:110px;height:110px;right:150px;bottom:-50px;background:var(--tint)"></span>
+    <span class="shape" style="width:40px;height:40px;right:120px;top:40px;background:var(--tint)"></span>
+    <div class="content"><span class="logo" data-logo style="font-size:24px"></span></div>
+    <div class="content" style="max-width:400px"><h1 style="font-size:38px">Find the funding you should apply for, and in what order.</h1><p style="font-size:15px;margin-top:10px">Grants, competitions and programs for early-stage founders.</p></div>
+  </div>
 </div>
 </div>
 
