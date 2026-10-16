@@ -81,6 +81,9 @@ const headers = `/*
   Content-Security-Policy: ${csp}
 `;
 writeFileSync(join(DIST, '_headers'), headers);
+// Pages serves 404.html, with a 404 status, for any path not in _redirects. It is the app shell,
+// so the app's own "page not found" screen renders.
+writeFileSync(join(DIST, '404.html'), readFileSync(join(DIST, 'index.html'), 'utf8'));
 console.log(`build-headers: wrote dist/_headers from ${files.length} files`);
 console.log(`  external origins found: ${[...origins].sort().join(', ') || 'none'}`);
 console.log(`  CSP: ${csp}`);

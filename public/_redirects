@@ -1,1 +1,24 @@
-/*  /index.html  200
+# Each app route is served by the single-page app (status 200). Any other path gets 404.html with a
+# real 404 status. tests in scripts/redirects.test.ts keep this list in sync with src/routes.tsx.
+/signin  /  200
+/auth/callback  /  200
+/start  /  200
+/preview  /  200
+/plan  /  200
+/profile  /  200
+/opportunity/*  /  200
+/materials  /  200
+/answers  /  200
+/draft/*  /  200
+/applications  /  200
+/calendar  /  200
+/checkin  /  200
+/unsubscribe  /  200
+/share/*  /  200
+/map  /  200
+/submit  /  200
+/claim/*  /  200
+/privacy  /  200
+/terms  /  200
+/admin  /  200
+/admin/*  /  200

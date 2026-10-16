@@ -185,7 +185,7 @@ The header must be exactly these 29 columns, in any order:
 npm run build
 ```
 
-The build writes `dist/_headers` (security headers and the CSP, which includes your Supabase origin) and copies `public/_redirects` (single-page app routing) and `public/robots.txt`.
+The build writes `dist/_headers` (security headers and the CSP, which includes your Supabase origin) and `dist/404.html`, and copies `public/_redirects` and `public/robots.txt`. `_redirects` serves each app route (status 200); any other path gets `404.html` with a real 404 status. When you add a route to `src/routes.tsx`, add it to `public/_redirects` too (`npm test` fails if you forget).
 
 2. Deploy the `dist` folder:
 
