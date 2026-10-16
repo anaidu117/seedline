@@ -1,6 +1,6 @@
 // Loading and saving a signed-in founder's data, and computing their plan.
 import { useCallback, useEffect, useState } from 'react';
-import { PROFILE_FIELD_KEYS, type ApplicationStatus, type FounderGroup, type MaterialKey } from '../../shared/vocab.ts';
+import type { ApplicationStatus, MaterialKey } from '../../shared/vocab.ts';
 import {
   buildPlan, computeTotals, newlyUnlocked, nextUnlock, planStatuses, type FounderProfile, type Plan, type PlanGroup,
   type Totals, type Unlock, type Unlocked,
@@ -18,17 +18,12 @@ export type ProfileRow = Record<string, unknown> & {
   email_reminders: boolean;
   email_checkins: boolean;
 };
-export interface GroupsRow { groups: FounderGroup[]; prefer_not_to_say: boolean }
+export type { GroupsRow } from '../../shared/profile.ts';
+import type { GroupsRow } from '../../shared/profile.ts';
 export interface ApplicationRow { id: string; opportunity_id: string; status: ApplicationStatus; amount_won: number | null; updated_at: string }
 
-/** DB rows to the matching engine's profile. Founder groups count only when answered and not "prefer not to say". */
-export function toFounderProfile(p: ProfileRow, g: GroupsRow | null): FounderProfile {
-  const out: Record<string, unknown> = {};
-  for (const k of PROFILE_FIELD_KEYS) if (k !== 'founder_groups') out[k] = p[k] ?? undefined;
-  out.milestones = p.milestones ?? [];
-  out.founder_groups = g && !g.prefer_not_to_say ? g.groups : undefined;
-  return out as FounderProfile;
-}
+export { toFounderProfile } from '../../shared/profile.ts';
+import { toFounderProfile } from '../../shared/profile.ts';
 
 /**
  * Makes sure a profile row exists. On the first sign-in, Layer 0 answers saved in this browser
