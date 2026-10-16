@@ -42,6 +42,8 @@ export async function callerUser(req: Request): Promise<User | null> {
   if (!token) return null;
   const { data, error } = await serviceClient().auth.getUser(token);
   if (error || !data.user) return null;
+  // Only confirmed email addresses count as an identity (admins, share invites, claims).
+  if (!data.user.email_confirmed_at) return null;
   return data.user;
 }
 
