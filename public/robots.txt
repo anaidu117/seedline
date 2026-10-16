@@ -1,0 +1,5 @@
+# Allow the home page and the public funding map. Everything else is private or per-founder.
+User-agent: *
+Allow: /$
+Allow: /map$
+Disallow: /

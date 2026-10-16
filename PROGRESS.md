@@ -35,8 +35,11 @@ Plan approved 2026-10-15 with every suggested default in PLAN.md section 5. Admi
 
 - **Step 18: metrics** (`/admin/metrics`). `admin_metrics(from, to)` (admin only, aggregates only): funnel from events with a definition next to each number, applications by status, founder-reported dollars won with "N of M wins included an amount", outcome report rate as "X of Y", share links created and opened, accounts by school and sector, events by month, CSV export. `tests/db/metrics.test.ts` 3 of 3: non-admin and anonymous refused, every number equals a direct SQL count, no founder groups or row data in the output. Browser: page renders with labels and definitions.
 
+- **Step 19: privacy, terms, 404, robots, headers, CSP.** `/privacy` and `/terms` marked "Draft, not binding.", describing only what the system does and naming Supabase, Resend, Cloudflare and Google Fonts. `public/robots.txt` allows `/` and `/map` only. `scripts/build-headers.ts` writes `dist/_headers` with a CSP built from the origins found in the built files and fails the build on any unreviewed origin. **No `unsafe-` directive is needed.** Verified with `wrangler pages dev dist` (the Cloudflare Pages runtime): all five headers present, SPA routes return the app, fonts and Turnstile work under the CSP, ramp colors render, no console errors. Also split rarely used pages into lazy chunks: main bundle 704 KB to 273 KB (83 KB gzipped).
+- Note: unknown URLs return HTTP 200 with the app's 404 page (normal for a single-page app on Pages).
+
 ## Next
-- Step 19: privacy, terms, robots, headers, CSP.
+- Step 20: accessibility and mobile pass, measured.
 
 ## Open questions
 - None.
