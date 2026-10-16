@@ -19,6 +19,12 @@ import CalendarPage from './pages/Calendar.tsx';
 import Checkin from './pages/Checkin.tsx';
 import Unsubscribe from './pages/Unsubscribe.tsx';
 import SharePage from './pages/Share.tsx';
+import MapPage from './pages/MapPage.tsx';
+import Submit from './pages/Submit.tsx';
+import ClaimPage from './pages/Claim.tsx';
+import SubmissionsQueue from './pages/admin/SubmissionsQueue.tsx';
+import ClaimsQueue from './pages/admin/ClaimsQueue.tsx';
+import StalenessQueue from './pages/admin/StalenessQueue.tsx';
 import { AdminLayout } from './pages/admin/AdminLayout.tsx';
 import OpportunityList from './pages/admin/OpportunityList.tsx';
 import OpportunityForm from './pages/admin/OpportunityForm.tsx';
@@ -53,6 +59,9 @@ export const router = createBrowserRouter([
         { path: '/checkin', element: <Checkin /> },
         { path: '/unsubscribe', element: <Unsubscribe /> },
         { path: '/share/:token', element: <SharePage /> },
+        { path: '/map', element: <MapPage /> },
+        { path: '/submit', element: <Submit /> },
+        { path: '/claim/:slug', element: <ClaimPage /> },
         {
           path: '/admin',
           element: <AdminLayout />,
@@ -61,6 +70,9 @@ export const router = createBrowserRouter([
             { path: 'opportunities/:id', element: <OpportunityForm /> },
             { path: 'import', element: <CsvImport /> },
             { path: 'verification', element: <VerificationQueue /> },
+            { path: 'staleness', element: <StalenessQueue /> },
+            { path: 'submissions', element: <SubmissionsQueue /> },
+            { path: 'claims', element: <ClaimsQueue /> },
           ],
         },
         { path: '*', element: <NotFound /> },

@@ -1,6 +1,6 @@
 // Full create and edit form for every opportunity field (spec section 10).
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import {
   DEADLINE_TYPES, FOUNDER_GROUPS, GEOGRAPHY_LEVELS, MATERIALS, OPPORTUNITY_TYPES, valueLabel, type VerificationStatus,
 } from '../../../shared/vocab.ts';
@@ -82,6 +82,7 @@ function toRow(f: Form): { row?: Record<string, unknown>; errors: string[] } {
 
 export default function OpportunityForm() {
   const { id } = useParams();
+  const [params] = useSearchParams();
   const isNew = id === 'new';
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -91,6 +92,18 @@ export default function OpportunityForm() {
   const [errors, setErrors] = useState<string[]>([]);
   const [saved, setSaved] = useState('');
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    // "Create a listing from this" in the submissions queue: prefill from the submission.
+    const from = params.get('from');
+    if (!isNew || !from) return;
+    supabase.from('submissions').select('payload').eq('id', from).single().then(({ data }) => {
+      const p = (data?.payload ?? {}) as Record<string, string>;
+      const slug = (p.name ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
+      setForm((f) => ({ ...(f ?? EMPTY), name: p.name ?? '', organizer: p.organizer ?? '', slug, source_url: p.url ?? '', application_url: p.url ?? '',
+        deadline_at: p.deadline ?? '', amount_notes: p.amount_notes ?? '', description: p.description ?? '' }));
+    });
+  }, [isNew, params]);
 
   useEffect(() => {
     if (isNew || !id) return;
