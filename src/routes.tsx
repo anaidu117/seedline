@@ -25,6 +25,7 @@ import ClaimPage from './pages/Claim.tsx';
 import SubmissionsQueue from './pages/admin/SubmissionsQueue.tsx';
 import ClaimsQueue from './pages/admin/ClaimsQueue.tsx';
 import StalenessQueue from './pages/admin/StalenessQueue.tsx';
+import Metrics from './pages/admin/Metrics.tsx';
 import { AdminLayout } from './pages/admin/AdminLayout.tsx';
 import OpportunityList from './pages/admin/OpportunityList.tsx';
 import OpportunityForm from './pages/admin/OpportunityForm.tsx';
@@ -73,6 +74,7 @@ export const router = createBrowserRouter([
             { path: 'staleness', element: <StalenessQueue /> },
             { path: 'submissions', element: <SubmissionsQueue /> },
             { path: 'claims', element: <ClaimsQueue /> },
+            { path: 'metrics', element: <Metrics /> },
           ],
         },
         { path: '*', element: <NotFound /> },

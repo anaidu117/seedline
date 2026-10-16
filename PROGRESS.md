@@ -33,8 +33,10 @@ Plan approved 2026-10-15 with every suggested default in PLAN.md section 5. Admi
 - **Step 16: public map** (`/map`). Filters for type, geography, sector, stage and deadline, kept in the URL. Sector and stage filter through each listing's own rules (no rule means open to all). Source and last-verified shown on each entry. Browser: only `opportunities` is requested; no requests while idle. `shared/mapFilter.test.ts` (4).
 - **Step 17: submissions, claims, staleness.** `/submit` with Turnstile (loaded only on that page) and `submit-opportunity` (Turnstile verified server side, 5 per hour per address); `/claim/:slug` with `claim-listing` (signed in, 5 per day), organizer editor once approved; admin submissions queue (prefill a new unverified listing), claims queue, staleness queue (over 90 days). `tests/functions/submissions.test.ts` 7 of 7. Browser: Turnstile issued its test token, submission accepted, rate limit message shown when over the limit, admin prefill and claims queue work.
 
+- **Step 18: metrics** (`/admin/metrics`). `admin_metrics(from, to)` (admin only, aggregates only): funnel from events with a definition next to each number, applications by status, founder-reported dollars won with "N of M wins included an amount", outcome report rate as "X of Y", share links created and opened, accounts by school and sector, events by month, CSV export. `tests/db/metrics.test.ts` 3 of 3: non-admin and anonymous refused, every number equals a direct SQL count, no founder groups or row data in the output. Browser: page renders with labels and definitions.
+
 ## Next
-- Step 18: metrics dashboard.
+- Step 19: privacy, terms, robots, headers, CSP.
 
 ## Open questions
 - None.
