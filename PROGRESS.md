@@ -51,8 +51,10 @@ Plan approved 2026-10-15 with every suggested default in PLAN.md section 5. Admi
 6. **Unknown URLs returned 200.** `_redirects` now lists each route, `404.html` is generated, so unknown paths get a real 404 on Pages (verified with `wrangler pages dev`: routes 200, unknown 404). Unit test keeps `_redirects` in sync with the router.
 7. **Smaller fixes:** nav shows founder pages only when signed in, with an Admin link for admins; Escape closes the mobile menu and returns focus; map filters fold away on phones; landing copy no longer says the ambiguous "No equity, no fees"; fit reasons use the founder's own answer; Not ready yet rows with unanswered questions get "Answer in profile". `tests/e2e/navigation.spec.ts` covers the first three.
 
-## Design refresh (in progress, mockup awaiting approval)
-Mockup: `design/mockups/b-plus-c.html` (open at http://localhost:5173/design/mockups/b-plus-c.html with `npm run dev`). Nothing in `src/` has changed for the design yet.
+## Design refresh (approved and rolled out)
+Mockup: `design/mockups/b-plus-c.html`. Approved and rolled out to every founder and public page; admin keeps its plain layout.
+Shared pieces: `src/components/brand.tsx` (BrandBlock, TypeChip, TypeKey, DeadlineTimeline, StepsPath), tokens in `src/styles/index.css`, type groups in `shared/vocab.ts`. Link preview: `public/og-image.png` (1200 by 630, rendered from `design/og-image.html` by `scripts/og-image.ts`) with Open Graph tags in `index.html`.
+Found during rollout: at 375px the navy circle sat behind the plan total (navy on navy). Fixed (the circle shrinks to a corner accent on phones), and the sweep now fails on any navy text over a navy shape; verified it fails without the fix.
 Decisions so far (answered by you):
 - Direction: B (bold Carolina blue blocks) plus C (9-month deadline timeline on the plan, colored by `ramp()`).
 - Hero shapes: allowed as brand texture, navy, Carolina blue and light blue only. Amber stays reserved for deadlines and wins.
@@ -66,10 +68,11 @@ Decisions so far (answered by you):
 Handbook items applied for real (no visual change): HSTS header and `sitemap.xml` (verified on `wrangler pages dev`: both present, routes 200, unknown 404).
 
 ## Final numbers (from the last full run, `npm run qa`)
-- `npm test`: 115 of 115 (9 files)
+- `npm test`: 118 of 118 (10 files)
 - `npm run check:functions`: all 12 Edge Functions type-check
 - `npm run test:db`: 98 of 98 (10 files)
-- `npm run test:e2e`: 12 passed, 2 skipped by design (founder flow runs at laptop width only; the menu test runs on mobile only)
+- `npm run test:e2e`: 16 passed, 2 skipped by design (founder flow runs at laptop width only; the menu test runs on mobile only)
+- `npm run contrast`: 21 of 21 pairs; `npm run check:copy`: 93 files clean
 - `npm run build`: passes; CSP has no `unsafe-` directive
 - Local database reset to the clean seed afterwards: 5 EXAMPLE rows, all unverified, no users.
 
