@@ -9,6 +9,7 @@ import { useAuth } from '../lib/auth.tsx';
 import { Alert, Loading, Page } from '../components/ui.tsx';
 import { OpportunityCard } from '../components/opportunity.tsx';
 import { Disclaimer } from '../components/Disclaimer.tsx';
+import { BrandBlock, DeadlineTimeline } from '../components/brand.tsx';
 import { MagicLinkForm } from './SignIn.tsx';
 
 export default function Preview() {
@@ -38,24 +39,31 @@ export default function Preview() {
 
   return (
     <Page narrow>
-      <section className="rounded-2xl bg-blue-tint p-6 md:p-8">
+      <BrandBlock shapes="small" className="p-6 md:p-8">
         {eligible.length > 0 ? (
           <>
             <p className="text-[length:var(--text-card)]">You match <span className="tabular font-bold">{eligible.length}</span> program{eligible.length === 1 ? '' : 's'} so far.</p>
             {totals.count > 0 && (
               <p className="mt-2">
-                <span className="block text-muted">You could apply for up to</span>
-                <span className="tabular font-display text-[length:var(--text-hero-sm)] font-bold">{formatUsd(totals.total)}</span>
+                <span className="block font-semibold">You could apply for up to</span>
+                <span className="tabular font-display text-[length:var(--text-hero)] font-extrabold leading-none">{formatUsd(totals.total)}</span>
               </p>
             )}
-            {totals.undisclosed.length > 0 && <p className="mt-1 text-muted">{totals.undisclosed.length} more with undisclosed amounts.</p>}
-            <p className="mt-2 text-[length:var(--text-meta)] text-muted">Founders rarely win everything. This is the most you could apply for.</p>
+            {totals.undisclosed.length > 0 && <p className="mt-1">{totals.undisclosed.length} more with undisclosed amounts.</p>}
+            <p className="mt-2 text-[length:var(--text-meta)]">Founders rarely win everything. This is the most you could apply for.</p>
           </>
         ) : (
           <p className="text-[length:var(--text-card)]">No programs match your answers yet.</p>
         )}
         {more > 0 && <p className="mt-3">{more} more could match once you answer a few more questions.</p>}
-      </section>
+      </BrandBlock>
+
+      {eligible.length > 0 && (
+        <section aria-labelledby="preview-timeline" className="mt-8">
+          <h2 id="preview-timeline" className="mb-3 text-[length:var(--text-section)]">Your next 9 months</h2>
+          <DeadlineTimeline today={today} items={eligible.filter((m) => m.window.closes).map((m) => ({ slug: m.opportunity.slug, name: m.opportunity.name, date: m.window.closes!, expected: m.window.expected }))} />
+        </section>
+      )}
 
       {top.length > 0 && (
         <section className="mt-8 flex flex-col gap-4">

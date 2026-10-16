@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Page } from '../components/ui.tsx';
+import { Page, PageTitle } from '../components/ui.tsx';
 
 // The contact address is a placeholder until the domain is set up (listed in PROGRESS.md under Needs your decision).
 const CONTACT = 'the contact email listed on this page once Seedline launches';
@@ -16,7 +16,7 @@ export function Privacy() {
   return (
     <Page narrow>
       <DraftBanner />
-      <h1 className="text-[length:var(--text-page)]">Privacy</h1>
+      <PageTitle>Privacy</PageTitle>
       <p className="mt-3">This describes what Seedline actually collects and who receives it. Seedline does not sell data, show ads, or use third-party analytics.</p>
       <Section title="What we collect">
         <p><span className="font-semibold">Before you sign up.</span> Your answers to the first questions (school, student status, state, city, stage, sector, whether you're incorporated) are kept in your browser's local storage, not on our servers, until you create an account. We also store a random ID in your browser to count how many visitors start and finish those questions. It is not linked to your name or email.</p>
@@ -51,7 +51,7 @@ export function Terms() {
   return (
     <Page narrow>
       <DraftBanner />
-      <h1 className="text-[length:var(--text-page)]">Terms</h1>
+      <PageTitle>Terms</PageTitle>
       <Section title="What Seedline is">
         <p>Seedline is an information tool. It lists grants, competitions, fellowships, accelerators and other programs, and suggests which ones may fit your startup and in what order. It is free to use.</p>
         <p>Seedline does not arrange investments, does not take any share of funding you receive, and is not affiliated with the programs it lists unless a listing says it is verified by its organizer.</p>

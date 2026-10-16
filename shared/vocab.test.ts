@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  assertKnownKeys, CSV_COLUMNS, DB_ENUMS, LAYER0_FIELD_KEYS, LAYER2_FIELD_KEYS, MILESTONES, PROFILE_FIELDS,
+  OPPORTUNITY_TYPES, OPPORTUNITY_TYPE_GROUP, assertKnownKeys, CSV_COLUMNS, DB_ENUMS, LAYER0_FIELD_KEYS, LAYER2_FIELD_KEYS, MILESTONES, PROFILE_FIELDS,
   PROFILE_FIELD_KEYS, RULE_FIELD_KEYS, STAGES, valueLabel, VALUE_LABELS, orderOf,
 } from './vocab.ts';
 
@@ -91,5 +91,14 @@ describe('vocabulary', () => {
       expect(l).not.toContain('—');
       expect(/^[A-Z ]{4,}$/.test(l), l).toBe(false);
     }
+  });
+});
+
+describe('opportunity type groups', () => {
+  it('puts every type in exactly one group, grants and competitions as money awards', () => {
+    expect(Object.keys(OPPORTUNITY_TYPE_GROUP).sort()).toEqual([...OPPORTUNITY_TYPES].sort());
+    expect(OPPORTUNITY_TYPE_GROUP.pitch_competition).toBe('money_award');
+    expect(OPPORTUNITY_TYPE_GROUP.federal_grant).toBe('money_award');
+    expect(OPPORTUNITY_TYPE_GROUP.accelerator).toBe('program');
   });
 });

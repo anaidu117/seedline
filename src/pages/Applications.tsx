@@ -11,6 +11,7 @@ import { track } from '../lib/events.ts';
 import { Alert, EmptyState, Loading, Page, PageTitle } from '../components/ui.tsx';
 import { DeadlineChip } from '../components/opportunity.tsx';
 import { RequireAuth } from '../components/RequireAuth.tsx';
+import { TypeChip } from '../components/brand.tsx';
 
 interface AppRow { id: string; status: ApplicationStatus; amount_won: number | null; opportunity: OpportunityRow | null }
 
@@ -80,7 +81,7 @@ function ApplicationsInner() {
                 <li key={r.id} className="rounded-xl border border-line p-4">
                   {o ? (
                     <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                      <Link to={`/opportunity/${o.slug}`} className="inline-flex min-h-11 items-center font-display text-[length:var(--text-card)] font-bold">{o.name}</Link>
+                      <div><TypeChip type={o.type} /><div><Link to={`/opportunity/${o.slug}`} className="inline-flex min-h-11 items-center font-display text-[length:var(--text-card)] font-bold">{o.name}</Link></div></div>
                       <DeadlineChip match={{ window: windowFor(o, today), opportunity: o }} today={today} />
                     </div>
                   ) : <p className="text-muted">This listing is no longer available.</p>}

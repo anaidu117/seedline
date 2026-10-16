@@ -1,16 +1,18 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
+import { BrandBlock } from './brand.tsx';
 
 export function Page({ children, narrow = false }: { children: ReactNode; narrow?: boolean }) {
   return <div className={`mx-auto ${narrow ? 'max-w-3xl' : 'max-w-6xl'} px-4 py-8 md:px-6 md:py-12`}>{children}</div>;
 }
 
+/** Page header for founder and public pages: the bold Carolina blue block. Admin pages do not use it. */
 export function PageTitle({ children, lead }: { children: ReactNode; lead?: ReactNode }) {
   return (
-    <header className="mb-8">
-      <h1 className="text-[length:var(--text-page)]">{children}</h1>
-      {lead && <p className="mt-2 max-w-2xl text-muted">{lead}</p>}
-    </header>
+    <BrandBlock as="header" shapes="small" className="mb-8 px-5 py-7 md:px-8 md:py-9">
+      <h1 className="max-w-[18em] pr-16 text-[length:var(--text-page)] md:text-[length:var(--text-hero-sm)]">{children}</h1>
+      {lead && <p className="mt-3 max-w-[34em] pr-10 text-navy">{lead}</p>}
+    </BrandBlock>
   );
 }
 

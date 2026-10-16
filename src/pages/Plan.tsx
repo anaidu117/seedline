@@ -11,6 +11,7 @@ import { CompactRow, OpportunityCard } from '../components/opportunity.tsx';
 import { Disclaimer } from '../components/Disclaimer.tsx';
 import { RequireAuth } from '../components/RequireAuth.tsx';
 import { SharePanel } from '../components/SharePanel.tsx';
+import { BrandBlock, DeadlineTimeline, TypeKey } from '../components/brand.tsx';
 
 export default function PlanPage() {
   return <RequireAuth><PlanInner /></RequireAuth>;
@@ -79,32 +80,46 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
 
   return (
     <div className="pb-8">
-      <section className="bg-blue-tint">
-        <div className="mx-auto max-w-6xl px-4 py-8 md:px-6 md:py-12">
+      <div className="mx-auto max-w-6xl px-4 pt-6 md:px-6">
+        <BrandBlock shapes="band" className="px-6 py-9 md:px-10 md:py-11">
           <h1 className="sr-only">Your funding plan</h1>
-          {totals.count > 0 ? (
-            <>
-              <p className="text-[length:var(--text-card)]">You're eligible for up to</p>
-              <p className="tabular font-display text-[length:var(--text-hero-sm)] font-bold leading-none md:text-[length:var(--text-hero)]" aria-live="off">
-                {formatUsd(shown)}
-              </p>
-              <p className="mt-2 text-[length:var(--text-card)]">across <span className="tabular font-semibold">{totals.count}</span> opportunit{totals.count === 1 ? 'y' : 'ies'}.</p>
-              <p className="tabular mt-3">{formatUsd(totals.openNow)} open now · {formatUsd(totals.openingLater)} opening later</p>
-            </>
-          ) : (
-            <p className="font-display text-[length:var(--text-page)] font-bold">No disclosed amounts on your plan yet.</p>
-          )}
-          <div className="mt-3 flex flex-col gap-1 text-muted">
-            {totals.undisclosed.length > 0 && <p>{totals.undisclosed.length} more with undisclosed amounts.</p>}
-            {totals.equity.length > 0 && <p>{totals.equity.length} program{totals.equity.length === 1 ? '' : 's'} that take equity, listed separately below and not added in.</p>}
-            <p>Founders rarely win everything. This is the most you could apply for.</p>
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div>
+              {totals.count > 0 ? (
+                <>
+                  <p className="text-[length:var(--text-card)] font-semibold">You're eligible for up to</p>
+                  <p className="tabular font-display text-[length:var(--text-hero)] font-extrabold leading-none md:text-[length:var(--text-mega)]" aria-live="off">
+                    {formatUsd(shown)}
+                  </p>
+                  <p className="mt-2 text-[length:var(--text-card)]">across <span className="tabular font-semibold">{totals.count}</span> opportunit{totals.count === 1 ? 'y' : 'ies'}</p>
+                </>
+              ) : (
+                <p className="font-display text-[length:var(--text-page)] font-extrabold">No disclosed amounts on your plan yet.</p>
+              )}
+            </div>
+            <div className="max-w-sm rounded-2xl bg-bg px-5 py-4 text-navy">
+              {totals.count > 0 && <p className="tabular font-bold">{formatUsd(totals.openNow)} open now · {formatUsd(totals.openingLater)} opening later</p>}
+              {totals.undisclosed.length > 0 && <p className="mt-1 text-[length:var(--text-meta)]">{totals.undisclosed.length} more with undisclosed amounts.</p>}
+              {totals.equity.length > 0 && <p className="mt-1 text-[length:var(--text-meta)]">{totals.equity.length} program{totals.equity.length === 1 ? '' : 's'} that take equity, listed separately below and not added in.</p>}
+              <p className="mt-1 text-[length:var(--text-meta)] text-muted">Founders rarely win everything. This is the most you could apply for.</p>
+            </div>
           </div>
-        </div>
-      </section>
+        </BrandBlock>
+      </div>
 
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pt-8 md:px-6">
+      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pt-10 md:px-6">
+        <section aria-labelledby="timeline">
+          <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="timeline" className="text-[length:var(--text-section)]">Your next 9 months</h2>
+            <p className="text-[length:var(--text-meta)] text-muted">Color shows how close each deadline is: amber is soon.</p>
+          </div>
+          <DeadlineTimeline today={today} animate={firstPlan}
+            items={[...plan.apply_now, ...plan.coming_up].filter((m) => m.status === 'eligible' && m.window.closes)
+              .map((m) => ({ slug: m.opportunity.slug, name: m.opportunity.name, date: m.window.closes!, expected: m.window.expected }))} />
+        </section>
+
         {unlock && (
-          <section aria-labelledby="next-step" className="rounded-xl border border-line bg-surface p-4 md:p-5">
+          <section aria-labelledby="next-step" className="rounded-[var(--radius-card)] border border-line bg-surface p-5 md:p-6">
             <h2 id="next-step" className="text-[length:var(--text-card)]">Your best next step</h2>
             <p className="mt-1">{unlock.message}</p>
             <Link to="/profile" className="btn btn-secondary mt-3">Update my profile</Link>
@@ -112,7 +127,7 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
         )}
 
         {unlocked.length > 0 && (
-          <section aria-labelledby="newly-unlocked" className="rounded-xl border-2 border-carolina p-4 md:p-5">
+          <section aria-labelledby="newly-unlocked" className="rounded-[var(--radius-card)] border-2 border-navy p-5 md:p-6">
             <SectionTitle id="newly-unlocked" count={unlocked.length}>Newly unlocked</SectionTitle>
             <ul className="mt-2 list-disc pl-5">
               {unlocked.map((u) => <li key={u.slug}><Link to={`/opportunity/${u.slug}`}>{bySlug.get(u.slug)?.name ?? u.slug}</Link></li>)}
@@ -121,7 +136,10 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
         )}
 
         <section aria-labelledby="apply-now" className="flex flex-col gap-4">
-          <SectionTitle id="apply-now" count={applyNow.length}>Apply now</SectionTitle>
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <SectionTitle id="apply-now" count={applyNow.length}>Apply now</SectionTitle>
+            <TypeKey />
+          </div>
           {applyNow.length === 0 ? (
             <p className="text-muted">Nothing is open for you right now. Check Coming up below, and fill in your profile to unlock more.</p>
           ) : applyNow.map((m, i) => (

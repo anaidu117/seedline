@@ -1,13 +1,13 @@
 // Shared pieces for showing an opportunity to founders.
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
-import { valueLabel } from '../../shared/vocab.ts';
 import { amountLine } from '../../shared/money.ts';
 import { daysBetween, formatDate, relativeDays, type IsoDate } from '../../shared/dates.ts';
 import { ramp, readinessT, urgencyT } from '../../shared/ramp.ts';
 import { foundersLikeYouLine, readinessText, type Match, type Opportunity, type Readiness } from '../../shared/matching/index.ts';
 import { NOT_DISCLOSED } from '../../shared/money.ts';
 import { isStale } from '../lib/opportunities.ts';
+import { TypeChip } from './brand.tsx';
 
 /** Deadline chip. Its tint and dot come from ramp() (amber means close); the text stays navy for contrast. */
 export function DeadlineChip({ match, today }: { match: Pick<Match, 'window' | 'opportunity'>; today: IsoDate }) {
@@ -59,11 +59,12 @@ function hostOf(url: string): string {
   try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; }
 }
 
+/** Organizer and amount. The type is shown as a TypeChip next to it, not repeated here. */
 export function MetaLine({ o }: { o: Opportunity }) {
   return (
     <p className="text-muted">
-      {o.organizer} · {valueLabel(o.type)} · <span className="tabular">{amountLine(o.amount_min, o.amount_max)}</span>
-      {o.equity_required && <span className="chip ml-2 bg-surface text-navy">Takes equity</span>}
+      {o.organizer} · <span className="tabular">{amountLine(o.amount_min, o.amount_max)}</span>
+      {o.equity_required && <span className="chip ml-2 border border-line-strong bg-surface text-navy">Takes equity</span>}
     </p>
   );
 }
@@ -89,9 +90,12 @@ export function OpportunityCard({ match, today, readiness, actions, delay, fly }
 }) {
   const o = match.opportunity;
   return (
-    <article className={`rounded-xl border border-line border-l-4 border-l-carolina bg-bg p-4 md:p-5 ${delay !== undefined ? 'rise-in' : ''}`} style={delay !== undefined ? { animationDelay: `${delay}ms` } : undefined}>
+    <article className={`rounded-[var(--radius-card)] border-2 border-navy bg-bg p-5 md:p-6 ${delay !== undefined ? 'rise-in' : ''}`} style={delay !== undefined ? { animationDelay: `${delay}ms` } : undefined}>
       <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-        <h3 className="text-[length:var(--text-card)]"><Link to={`/opportunity/${o.slug}`} className="inline-flex min-h-11 items-center text-navy">{o.name}</Link></h3>
+        <div>
+          <TypeChip type={o.type} />
+          <h3 className="mt-2 text-[length:var(--text-section)]"><Link to={`/opportunity/${o.slug}`} className="inline-flex min-h-11 items-center text-navy no-underline hover:underline">{o.name}</Link></h3>
+        </div>
         <DeadlineChip match={match} today={today} />
       </div>
       <MetaLine o={o} />
@@ -115,7 +119,8 @@ export function CompactRow({ match, today, detail, action, fly }: {
   return (
     <li className="flex flex-col gap-1 py-3 md:flex-row md:items-start md:gap-4">
       <div className="min-w-0 flex-1">
-        <Link to={`/opportunity/${o.slug}`} className="link-target font-semibold">{o.name}</Link>
+        <TypeChip type={o.type} />
+        <div><Link to={`/opportunity/${o.slug}`} className="link-target text-[length:var(--text-card)] font-semibold">{o.name}</Link></div>
         <p className="text-[length:var(--text-meta)] text-muted">{o.organizer} · <span className="tabular">{amountLine(o.amount_min, o.amount_max)}</span>{o.equity_required ? ' · Takes equity' : ''}</p>
         {detail && <div className="mt-1">{detail}</div>}
         <div className="mt-1"><ResultsLines o={o} fly={fly} /></div>

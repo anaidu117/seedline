@@ -14,6 +14,7 @@ import { Alert, Loading, Page } from '../components/ui.tsx';
 import { DeadlineChip, MetaLine, ReadinessLine, SourceLine } from '../components/opportunity.tsx';
 import { CalendarButtons } from '../components/CalendarButtons.tsx';
 import { Disclaimer } from '../components/Disclaimer.tsx';
+import { BrandBlock, TypeChip } from '../components/brand.tsx';
 import NotFound from './NotFound.tsx';
 
 export default function OpportunityPage() {
@@ -53,8 +54,11 @@ function Detail({ o }: { o: OpportunityRow }) {
   return (
     <Page narrow>
       <p className="mb-2"><Link className="link-target" to={user ? '/plan' : '/map'}>{user ? 'Back to my plan' : 'Back to the funding map'}</Link></p>
-      <header className="flex flex-col gap-2">
-        <h1 className="text-[length:var(--text-page)]">{o.name}</h1>
+      <BrandBlock as="header" shapes="small" className="px-5 py-7 md:px-8 md:py-9">
+        <TypeChip type={o.type} />
+        <h1 className="mt-3 max-w-[18em] pr-12 text-[length:var(--text-page)] md:text-[length:var(--text-hero-sm)]">{o.name}</h1>
+      </BrandBlock>
+      <header className="mt-4 flex flex-col gap-2">
         <MetaLine o={o} />
         <div><DeadlineChip match={{ window, opportunity: o }} today={today} /></div>
         <SourceLine o={o} />

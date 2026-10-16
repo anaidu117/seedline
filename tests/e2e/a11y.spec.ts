@@ -33,7 +33,39 @@ async function measure(page: Page): Promise<Report> {
       const tr = target.getBoundingClientRect();
       if (tr.height < 44 || tr.width < 24) small.push(`${el.tagName.toLowerCase()} "${(el.textContent || el.getAttribute('aria-label') || (el as HTMLInputElement).name || el.id).trim().slice(0, 40)}" ${Math.round(tr.width)}x${Math.round(tr.height)}`);
     }
-    return { overflow, small, noFocus: [] };
+    // Text on a brand block must never sit on top of the navy shape (navy text on navy is invisible).
+    const shapeHits: string[] = [];
+    for (const block of Array.from(document.querySelectorAll('.brand-block'))) {
+      const navyShapes = Array.from(block.querySelectorAll<HTMLElement>(':scope > .shape'))
+        .filter((s) => getComputedStyle(s).display !== 'none' && getComputedStyle(s).backgroundColor === 'rgb(19, 41, 75)')
+        .map((s) => s.getBoundingClientRect());
+      const walker = document.createTreeWalker(block.querySelector('.block-content')!, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const node = walker.currentNode as Text;
+        if (!node.textContent?.trim()) continue;
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        const host = node.parentElement!;
+        // White text (buttons, money chips) is readable on navy; only navy text is at risk.
+        if (getComputedStyle(host).color !== 'rgb(19, 41, 75)') continue;
+        // Text on its own opaque surface (a white card inside the block) is not on the shape.
+        let covered = false;
+        for (let el: HTMLElement | null = host; el && el !== block; el = el.parentElement) {
+          const bg = getComputedStyle(el).backgroundColor;
+          if (bg !== 'rgba(0, 0, 0, 0)' && !/,\s*0(\.\d+)?\)$/.test(bg)) { covered = true; break; }
+        }
+        if (covered) continue;
+        for (const r of Array.from(range.getClientRects())) {
+          for (const sh of navyShapes) {
+            // Inset the circle's box so only real overlap with the round part counts.
+            const cx = sh.left + sh.width / 2, cy = sh.top + sh.height / 2, rad = sh.width / 2;
+            const nx = Math.max(r.left, Math.min(cx, r.right)), ny = Math.max(r.top, Math.min(cy, r.bottom));
+            if ((nx - cx) ** 2 + (ny - cy) ** 2 < rad * rad) shapeHits.push(node.textContent.trim().slice(0, 30));
+          }
+        }
+      }
+    }
+    return { overflow, small: [...small, ...shapeHits.map((t) => `text on navy shape: "${t}"`)], noFocus: [] };
   });
 }
 

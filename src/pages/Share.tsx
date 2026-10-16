@@ -1,11 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useParams } from 'react-router';
-import { valueLabel } from '../../shared/vocab.ts';
+import type { OpportunityType } from '../../shared/vocab.ts';
+import { BrandBlock, TypeChip } from '../components/brand.tsx';
 import { amountLine, formatUsd } from '../../shared/money.ts';
 import type { Window } from '../../shared/matching/index.ts';
 import { supabase } from '../lib/supabase.ts';
 import { useAuth } from '../lib/auth.tsx';
-import { Alert, Loading, Page, SectionTitle } from '../components/ui.tsx';
+import { Alert, Loading, Page, PageTitle, SectionTitle } from '../components/ui.tsx';
 import { DeadlineChip, ResultsLines, SourceLine } from '../components/opportunity.tsx';
 import { Disclaimer } from '../components/Disclaimer.tsx';
 import { MagicLinkForm } from './SignIn.tsx';
@@ -60,7 +61,7 @@ export default function SharePage() {
   if (state.kind === 'password') {
     return (
       <Page narrow>
-        <h1 className="text-[length:var(--text-page)]">A founder shared their funding plan with you</h1>
+        <PageTitle>A founder shared their funding plan with you</PageTitle>
         <form onSubmit={submit} className="mt-6 flex flex-col gap-3">
           <label htmlFor="pw" className="field-label">Enter the password they gave you</label>
           <input id="pw" type="password" autoComplete="off" className="input max-w-sm" value={password} onChange={(e) => setPassword(e.target.value)} required />
@@ -73,7 +74,7 @@ export default function SharePage() {
   if (state.kind === 'signin') {
     return (
       <Page narrow>
-        <h1 className="text-[length:var(--text-page)]">A founder shared their funding plan with you</h1>
+        <PageTitle>A founder shared their funding plan with you</PageTitle>
         <p className="mt-2 text-muted">Sign in with the email address it was shared with. We'll send you a one-time link.</p>
         <div className="mt-6"><MagicLinkForm next={`/share/${token}`} cta="Email me a link to view it" /></div>
       </Page>
@@ -83,18 +84,18 @@ export default function SharePage() {
   return (
     <Page>
       <p className="chip bg-surface text-navy">Read-only shared plan</p>
-      <section className="mt-4 rounded-2xl bg-blue-tint p-6 md:p-8">
+      <BrandBlock shapes="band" className="mt-4 p-6 md:p-8">
         {d.totals.count > 0 ? (
           <>
             <p className="text-[length:var(--text-card)]">Eligible for up to</p>
-            <p className="tabular font-display text-[length:var(--text-hero-sm)] font-bold leading-none md:text-[length:var(--text-hero)]">{formatUsd(d.totals.total)}</p>
+            <p className="tabular font-display text-[length:var(--text-hero-sm)] font-extrabold leading-none md:text-[length:var(--text-hero)]">{formatUsd(d.totals.total)}</p>
             <p className="mt-2">across <span className="tabular font-semibold">{d.totals.count}</span> opportunit{d.totals.count === 1 ? 'y' : 'ies'}. <span className="tabular">{formatUsd(d.totals.openNow)} open now · {formatUsd(d.totals.openingLater)} opening later.</span></p>
           </>
         ) : <p className="font-display text-[length:var(--text-page)] font-bold">No disclosed amounts on this plan yet.</p>}
-        {d.totals.undisclosed > 0 && <p className="mt-2 text-muted">{d.totals.undisclosed} more with undisclosed amounts.</p>}
+        {d.totals.undisclosed > 0 && <p className="mt-2">{d.totals.undisclosed} more with undisclosed amounts.</p>}
         {d.totals.equity > 0 && <p className="text-muted">{d.totals.equity} that take equity, not added in.</p>}
-        <p className="mt-2 text-muted">Founders rarely win everything. This is the most they could apply for.</p>
-      </section>
+        <p className="mt-2">Founders rarely win everything. This is the most they could apply for.</p>
+      </BrandBlock>
       {(['apply_now', 'coming_up', 'not_ready', 'needs_info'] as const).map((g) => (
         <section key={g} className="mt-10">
           <SectionTitle count={d[g].length}>{{ apply_now: 'Apply now', coming_up: 'Coming up', not_ready: 'Not ready yet', needs_info: 'Needs info' }[g]}</SectionTitle>
@@ -103,10 +104,10 @@ export default function SharePage() {
               {d[g].map((m) => (
                 <li key={m.slug} className="flex flex-col gap-1 py-3">
                   <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                    <Link to={`/opportunity/${m.slug}`} className="link-target font-semibold">{m.name}</Link>
+                    <div><TypeChip type={m.type as OpportunityType} /><div><Link to={`/opportunity/${m.slug}`} className="link-target text-[length:var(--text-card)] font-semibold">{m.name}</Link></div></div>
                     <DeadlineChip match={{ window: m.window, opportunity: { deadline_type: m.deadline_type } as never }} today={d.today} />
                   </div>
-                  <p className="text-[length:var(--text-meta)] text-muted">{m.organizer} · {valueLabel(m.type)} · <span className="tabular">{amountLine(m.amount_min, m.amount_max)}</span>{m.equity_required ? ' · Takes equity' : ''}</p>
+                  <p className="text-[length:var(--text-meta)] text-muted">{m.organizer} · <span className="tabular">{amountLine(m.amount_min, m.amount_max)}</span>{m.equity_required ? ' · Takes equity' : ''}</p>
                   {m.fits.length > 0 && <p className="text-[length:var(--text-meta)]">Fits: {m.fits.join('. ')}.</p>}
                   {m.gaps.length > 0 && <ul className="text-[length:var(--text-meta)]">{m.gaps.map((x) => <li key={x}>{x}</li>)}</ul>}
                   <ResultsLines o={m as never} fly={m.fly} />

@@ -37,7 +37,8 @@ export const LAYER0 = { school: 'unc', student_status: 'grad', state: 'NC', stag
 
 /** Every opportunity listing (card or row) shows both results lines, its source and last-verified date. */
 export async function expectEveryListingHonest(page: Page): Promise<void> {
-  const listings = page.locator('main article, main li').filter({ has: page.locator('a[href^="/opportunity/"]') });
+  // Timeline entries are a date summary of listings shown in full elsewhere on the page, so they are not listings.
+  const listings = page.locator('main article, main li:not([data-timeline-list] > li)').filter({ has: page.locator('a[href^="/opportunity/"]') });
   const n = await listings.count();
   expect(n).toBeGreaterThan(0);
   for (let i = 0; i < n; i++) {

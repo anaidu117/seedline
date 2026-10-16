@@ -8,6 +8,7 @@ import { fetchOpportunities, type OpportunityRow } from '../lib/opportunities.ts
 import { Alert, Loading, Page, PageTitle } from '../components/ui.tsx';
 import { DeadlineChip, MetaLine, ResultsLines, SourceLine } from '../components/opportunity.tsx';
 import { useAuth } from '../lib/auth.tsx';
+import { TypeChip } from '../components/brand.tsx';
 import { supabase } from '../lib/supabase.ts';
 import { flyFor, useFoundersLikeYou } from '../lib/fly.ts';
 import type { Sector, Stage } from '../../shared/vocab.ts';
@@ -117,6 +118,7 @@ export default function MapPage() {
                     <Link to={`/opportunity/${o.slug}`} className="inline-flex min-h-11 items-center font-display text-[length:var(--text-card)] font-bold">{o.name}</Link>
                     <DeadlineChip match={{ window: w, opportunity: o }} today={today} />
                   </div>
+                  <div><TypeChip type={o.type} /></div>
                   <MetaLine o={o} />
                   <p className="text-[length:var(--text-meta)] text-muted">{valueLabel(o.geography_level)}{o.regions.length ? `: ${o.regions.join(', ')}` : ''}</p>
                   <ResultsLines o={o} fly={flyFor(fly, o.id)} />

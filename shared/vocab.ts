@@ -18,6 +18,18 @@ export const OPPORTUNITY_TYPES = [
   'university_grant', 'pitch_competition', 'state_grant', 'federal_grant', 'fellowship',
   'accelerator', 'showcase_conference',
 ] as const;
+/**
+ * Opportunity type groups (design decision, PROGRESS.md): money awards vs programs.
+ * Shown as two chip styles; the group is meaning, not decoration.
+ */
+export const OPPORTUNITY_TYPE_GROUPS = ['money_award', 'program'] as const;
+export type OpportunityTypeGroup = (typeof OPPORTUNITY_TYPE_GROUPS)[number];
+export const OPPORTUNITY_TYPE_GROUP: Record<(typeof OPPORTUNITY_TYPES)[number], OpportunityTypeGroup> = {
+  university_grant: 'money_award', pitch_competition: 'money_award', state_grant: 'money_award', federal_grant: 'money_award',
+  fellowship: 'program', accelerator: 'program', showcase_conference: 'program',
+};
+export const TYPE_GROUP_LABELS: Record<OpportunityTypeGroup, string> = { money_award: 'Money award', program: 'Program' };
+
 export const GEOGRAPHY_LEVELS = ['campus', 'triangle', 'north_carolina', 'southeast', 'national'] as const;
 export const MATERIALS = [
   'pitch_deck', 'pitch_video', 'one_pager', 'executive_summary', 'budget', 'faculty_sponsor_letter',
