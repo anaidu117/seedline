@@ -15,7 +15,8 @@
     "db:reset": "supabase db reset",
     "contrast": "tsx scripts/contrast.ts",
     "check:copy": "tsx scripts/check-copy.ts",
-    "qa": "npm test && npm run test:db && npm run build && npm run contrast && npm run check:copy && npm run test:e2e"
+    "qa": "npm test && npm run check:functions && npm run test:db && npm run build && npm run contrast && npm run check:copy && npm run test:e2e",
+    "check:functions": "deno check --quiet --config supabase/functions/deno.json supabase/functions/*/index.ts"
   },
   "type": "module",
   "private": true,
@@ -28,6 +29,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "deno": "^2.9.6",
     "pg": "^8.23.1",
     "supabase": "^2.121.0",
     "tailwindcss": "^4.3.3",
