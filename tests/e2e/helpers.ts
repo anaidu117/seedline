@@ -34,3 +34,17 @@ export function uniqueEmail(tag: string): string {
 }
 
 export const LAYER0 = { school: 'unc', student_status: 'grad', state: 'NC', stage: 'prototype', sector: 'health_biotech', incorporated: false };
+
+/** Every opportunity listing (card or row) shows both results lines, its source and last-verified date. */
+export async function expectEveryListingHonest(page: Page): Promise<void> {
+  const listings = page.locator('main article, main li').filter({ has: page.locator('a[href^="/opportunity/"]') });
+  const n = await listings.count();
+  expect(n).toBeGreaterThan(0);
+  for (let i = 0; i < n; i++) {
+    const item = listings.nth(i);
+    await expect(item.getByText('Past results, from the organizer:')).toHaveCount(1);
+    await expect(item.getByText('Founders like you, from Seedline:')).toHaveCount(1);
+    await expect(item.getByText(/^Source:/)).toHaveCount(1);
+    await expect(item.getByText(/Last verified|Verification date not recorded/)).toHaveCount(1);
+  }
+}

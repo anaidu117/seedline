@@ -4,7 +4,7 @@ import { valueLabel } from '../../shared/vocab.ts';
 import { formatUsd } from '../../shared/money.ts';
 import { layerFor, materialsReadiness, type Match } from '../../shared/matching/index.ts';
 import { useAuth } from '../lib/auth.tsx';
-import { supabase } from '../lib/supabase.ts';
+import { flyFor, useFoundersLikeYou } from '../lib/fly.ts';
 import { saveToApplications, useFounder, type FounderData } from '../lib/founder.ts';
 import { Alert, Loading, Page, SectionTitle } from '../components/ui.tsx';
 import { CompactRow, OpportunityCard } from '../components/opportunity.tsx';
@@ -50,15 +50,9 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
   const { plan, totals, unlock, unlocked, today, materials, applications, firstPlan } = data;
   const shown = useCountUp(totals.total, firstPlan);
   const [busy, setBusy] = useState('');
-  // Founders like you for every card in one call. The database returns nothing below 10 reports.
-  const [fly, setFly] = useState<Map<string, { reported: number; won: number }> | null>(null);
-  const ids = plan.apply_now.map((m) => m.opportunity.id!).join(',');
-  useEffect(() => {
-    const { stage, sector } = data.profile;
-    if (!stage || !sector || !ids) { setFly(new Map()); return; }
-    supabase.rpc('founders_like_you_many', { opps: ids.split(','), p_stage: stage, p_sector: sector })
-      .then(({ data: rows }) => setFly(new Map((rows ?? []).map((r: { opportunity_id: string; reported: number; won: number }) => [r.opportunity_id, r]))));
-  }, [ids, data.profile.stage, data.profile.sector]);
+  // Founders like you for every listing on the plan in one call. The database returns nothing below 10 reports.
+  const allIds = [...plan.apply_now, ...plan.coming_up, ...plan.not_ready, ...plan.needs_info, ...plan.targeted].map((m) => m.opportunity.id!);
+  const fly = useFoundersLikeYou(allIds, data.profile);
   const bySlug = new Map(data.opportunities.map((o) => [o.slug, o]));
 
   // Equity programs are listed on their own and never added to the total (spec 7.1).
@@ -133,7 +127,7 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
           ) : applyNow.map((m, i) => (
             <OpportunityCard key={m.opportunity.slug} match={m} today={today} delay={firstPlan ? i * 70 : undefined}
               readiness={materialsReadiness(m.opportunity.materials_required, materials)} actions={actions(m)}
-              fly={fly ? (fly.get(m.opportunity.id!) ?? null) : undefined} />
+              fly={flyFor(fly, m.opportunity.id)} />
           ))}
         </section>
 
@@ -141,7 +135,7 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
           <SectionTitle id="coming-up" count={comingUp.length}>Coming up</SectionTitle>
           {comingUp.length === 0
             ? <p className="mt-2 text-muted">Nothing opening in the next 9 months matches yet.</p>
-            : <ul className="mt-2 divide-y divide-line border-y border-line">{comingUp.map((m) => <CompactRow key={m.opportunity.slug} match={m} today={today} />)}</ul>}
+            : <ul className="mt-2 divide-y divide-line border-y border-line">{comingUp.map((m) => <CompactRow key={m.opportunity.slug} match={m} today={today} fly={flyFor(fly, m.opportunity.id)} />)}</ul>}
         </section>
 
         {equity.length > 0 && (
@@ -149,7 +143,7 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
             <SectionTitle id="equity" count={equity.length}>Programs that take equity</SectionTitle>
             <p className="mt-1 text-muted">These take a share of your company. They are not added to your total.</p>
             <ul className="mt-2 divide-y divide-line border-y border-line">
-              {equity.map((m) => <CompactRow key={m.opportunity.slug} match={m} today={today} detail={m.opportunity.equity_notes ? <p className="text-[length:var(--text-meta)]">{m.opportunity.equity_notes}</p> : undefined} />)}
+              {equity.map((m) => <CompactRow key={m.opportunity.slug} match={m} today={today} fly={flyFor(fly, m.opportunity.id)} detail={m.opportunity.equity_notes ? <p className="text-[length:var(--text-meta)]">{m.opportunity.equity_notes}</p> : undefined} />)}
             </ul>
           </section>
         )}
@@ -159,7 +153,7 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
           {plan.not_ready.length === 0
             ? <p className="mt-2 text-muted">Nothing here. You meet the readiness bar for everything you're eligible for.</p>
             : <ul className="mt-2 divide-y divide-line border-y border-line">{plan.not_ready.map((m) => (
-                <CompactRow key={m.opportunity.slug} match={m} today={today} detail={<GapList match={m} />} />
+                <CompactRow key={m.opportunity.slug} match={m} today={today} fly={flyFor(fly, m.opportunity.id)} detail={<GapList match={m} />} />
               ))}</ul>}
         </section>
 
@@ -168,7 +162,7 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
           {plan.needs_info.length === 0
             ? <p className="mt-2 text-muted">Nothing here. We have what we need to check every program.</p>
             : <ul className="mt-2 divide-y divide-line border-y border-line">{plan.needs_info.map((m) => (
-                <CompactRow key={m.opportunity.slug} match={m} today={today} detail={<GapList match={m} />}
+                <CompactRow key={m.opportunity.slug} match={m} today={today} fly={flyFor(fly, m.opportunity.id)} detail={<GapList match={m} />}
                   action={<Link className="btn btn-quiet" to="/profile">Answer in profile</Link>} />
               ))}</ul>}
         </section>
@@ -179,7 +173,7 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
             <p className="mt-1 max-w-2xl text-muted">These programs are only open to certain groups of founders. You haven't told us whether any apply to you, so we show them here rather than guess. Answering is optional.</p>
             <ul className="mt-2 divide-y divide-line border-y border-line">
               {plan.targeted.map((m) => (
-                <CompactRow key={m.opportunity.slug} match={m} today={today}
+                <CompactRow key={m.opportunity.slug} match={m} today={today} fly={flyFor(fly, m.opportunity.id)}
                   detail={<p className="text-[length:var(--text-meta)]">Open to: {m.opportunity.target_groups.map((g) => valueLabel(g).toLowerCase()).join(', ')}.{m.failed.length + m.unknown.length > 0 ? ' Other requirements still apply.' : ' You meet the other requirements.'}</p>} />
               ))}
             </ul>

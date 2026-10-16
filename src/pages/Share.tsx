@@ -6,7 +6,7 @@ import type { Window } from '../../shared/matching/index.ts';
 import { supabase } from '../lib/supabase.ts';
 import { useAuth } from '../lib/auth.tsx';
 import { Alert, Loading, Page, SectionTitle } from '../components/ui.tsx';
-import { DeadlineChip, SourceLine } from '../components/opportunity.tsx';
+import { DeadlineChip, ResultsLines, SourceLine } from '../components/opportunity.tsx';
 import { Disclaimer } from '../components/Disclaimer.tsx';
 import { MagicLinkForm } from './SignIn.tsx';
 
@@ -14,6 +14,8 @@ interface SharedMatch {
   slug: string; name: string; organizer: string; type: string; amount_min: number | null; amount_max: number | null;
   equity_required: boolean; deadline_type: string; window: Window; source_url: string; last_verified_at: string | null;
   verification_status: 'verified' | 'organizer_verified'; fits: string[]; gaps: string[];
+  past_results_text: string | null; past_results_count: number | null; past_results_year: number | null;
+  fly: { reported: number; won: number } | null;
 }
 interface Shared {
   today: string;
@@ -107,6 +109,7 @@ export default function SharePage() {
                   <p className="text-[length:var(--text-meta)] text-muted">{m.organizer} · {valueLabel(m.type)} · <span className="tabular">{amountLine(m.amount_min, m.amount_max)}</span>{m.equity_required ? ' · Takes equity' : ''}</p>
                   {m.fits.length > 0 && <p className="text-[length:var(--text-meta)]">Fits: {m.fits.join('. ')}.</p>}
                   {m.gaps.length > 0 && <ul className="text-[length:var(--text-meta)]">{m.gaps.map((x) => <li key={x}>{x}</li>)}</ul>}
+                  <ResultsLines o={m as never} fly={m.fly} />
                   <SourceLine o={m} />
                 </li>
               ))}

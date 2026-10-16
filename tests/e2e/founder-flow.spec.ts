@@ -1,7 +1,7 @@
 // The founder flow through the real UI: Layer 0, preview, magic link, plan, milestone, detail,
 // materials, answer bank, draft, applications, calendar, share link.
 import { expect, test } from '@playwright/test';
-import { latestLink, uniqueEmail } from './helpers.ts';
+import { expectEveryListingHonest, latestLink, uniqueEmail } from './helpers.ts';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -39,14 +39,8 @@ test('a new visitor goes from intake to a full plan and through every founder pa
   await expect(page.getByRole('heading', { name: /Apply now/ })).toBeVisible();
   for (const h of ['Coming up', 'Not ready yet', 'Needs info']) await expect(page.getByRole('heading', { name: new RegExp(h) })).toBeVisible();
   await expect(page.getByText('Information only, not legal or investment advice.').first()).toBeVisible();
-  // Every card shows past results and founders like you as two separate lines.
-  const cards = page.locator('article');
-  const n = await cards.count();
-  expect(n).toBeGreaterThan(0);
-  for (let i = 0; i < n; i++) {
-    await expect(cards.nth(i).getByText('Past results, from the organizer:')).toBeVisible();
-    await expect(cards.nth(i).getByText('Founders like you, from Seedline:')).toBeVisible();
-  }
+  // Every listing on the plan shows past results and founders like you as two separate lines, plus source and last verified.
+  await expectEveryListingHonest(page);
   await page.getByRole('button', { name: 'Save to my applications' }).first().click();
   await expect(page.getByRole('link', { name: 'Saved to applications' }).first()).toBeVisible();
 
@@ -90,6 +84,11 @@ test('a new visitor goes from intake to a full plan and through every founder pa
   await page.getByLabel('Status').first().selectOption('applied');
   await expect(page.getByText('1 applied')).toBeVisible();
 
+  // Public map listings follow the same rule
+  await page.goto('/map');
+  await expect(page.getByRole('status')).toContainText('program');
+  await expectEveryListingHonest(page);
+
   // Calendar and feed
   await page.goto('/calendar');
   await page.getByRole('button', { name: /feed link/ }).click();
@@ -117,5 +116,6 @@ test('a new visitor goes from intake to a full plan and through every founder pa
   await viewer.getByRole('button', { name: 'Open the plan' }).click();
   await expect(viewer.getByText('Read-only shared plan')).toBeVisible();
   await expect(viewer.getByText('Founder accelerator')).toHaveCount(0);
+  await expectEveryListingHonest(viewer);
   await viewer.close();
 });

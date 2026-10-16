@@ -107,7 +107,10 @@ export function OpportunityCard({ match, today, readiness, actions, delay, fly }
 }
 
 /** A compact row for Coming up, Not ready yet and Needs info. */
-export function CompactRow({ match, today, detail, action }: { match: Match; today: IsoDate; detail?: ReactNode; action?: ReactNode }) {
+export function CompactRow({ match, today, detail, action, fly }: {
+  match: Match; today: IsoDate; detail?: ReactNode; action?: ReactNode;
+  fly?: { reported: number; won: number } | null | 'signin';
+}) {
   const o = match.opportunity;
   return (
     <li className="flex flex-col gap-1 py-3 md:flex-row md:items-start md:gap-4">
@@ -115,6 +118,8 @@ export function CompactRow({ match, today, detail, action }: { match: Match; tod
         <Link to={`/opportunity/${o.slug}`} className="link-target font-semibold">{o.name}</Link>
         <p className="text-[length:var(--text-meta)] text-muted">{o.organizer} · <span className="tabular">{amountLine(o.amount_min, o.amount_max)}</span>{o.equity_required ? ' · Takes equity' : ''}</p>
         {detail && <div className="mt-1">{detail}</div>}
+        <div className="mt-1"><ResultsLines o={o} fly={fly} /></div>
+        <div className="mt-1"><SourceLine o={o} /></div>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <DeadlineChip match={match} today={today} />

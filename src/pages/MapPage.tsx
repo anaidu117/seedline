@@ -6,7 +6,11 @@ import { compareMatches, windowFor } from '../../shared/matching/index.ts';
 import { todayEastern } from '../../shared/dates.ts';
 import { fetchOpportunities, type OpportunityRow } from '../lib/opportunities.ts';
 import { Alert, Loading, Page, PageTitle } from '../components/ui.tsx';
-import { DeadlineChip, MetaLine, SourceLine } from '../components/opportunity.tsx';
+import { DeadlineChip, MetaLine, ResultsLines, SourceLine } from '../components/opportunity.tsx';
+import { useAuth } from '../lib/auth.tsx';
+import { supabase } from '../lib/supabase.ts';
+import { flyFor, useFoundersLikeYou } from '../lib/fly.ts';
+import type { Sector, Stage } from '../../shared/vocab.ts';
 import { Disclaimer } from '../components/Disclaimer.tsx';
 
 /** Public funding map (spec 7.12). Verified listings only; no founder data of any kind. */
@@ -23,6 +27,14 @@ export default function MapPage() {
     deadline: (params.get('deadline') ?? 'any') as DeadlineFilter,
   };
 
+  // Signed-in founders see "Founders like you" for their own stage and sector; everyone else is asked to sign in.
+  const { user } = useAuth();
+  const [who, setWho] = useState<{ stage: Stage | null; sector: Sector | null } | null>(null);
+  useEffect(() => {
+    if (!user) { setWho(null); return; }
+    supabase.from('profiles').select('stage, sector').eq('user_id', user.id).maybeSingle().then(({ data }) => setWho(data ?? { stage: null, sector: null }));
+  }, [user?.id]);
+
   useEffect(() => {
     // Opportunities only. RLS returns verified, unarchived listings to everyone.
     fetchOpportunities().then(setRows).catch((e) => setError(e.message));
@@ -34,6 +46,8 @@ export default function MapPage() {
     .sort((a, b) => compareMatches({ opportunity: a.o, window: a.w } as never, { opportunity: b.o, window: b.w } as never)),
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [rows, params.toString()]);
+
+  const fly = useFoundersLikeYou(shown.map(({ o }) => o.id), who);
 
   const set = (k: string, v: string) => {
     const next = new URLSearchParams(params);
@@ -85,6 +99,7 @@ export default function MapPage() {
                   </div>
                   <MetaLine o={o} />
                   <p className="text-[length:var(--text-meta)] text-muted">{valueLabel(o.geography_level)}{o.regions.length ? `: ${o.regions.join(', ')}` : ''}</p>
+                  <ResultsLines o={o} fly={flyFor(fly, o.id)} />
                   <SourceLine o={o} />
                 </li>
               ))}

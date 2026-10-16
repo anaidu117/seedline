@@ -46,6 +46,12 @@ describe('password share links', () => {
     expect(text).toContain('EXAMPLE: Share visible');
     expect(text).not.toContain('Veterans only');
     expect(text).not.toMatch(/veteran|founder_groups|target_groups|materials|storage_path|research_notes/i);
+    // Each shared listing carries its past results fields and a founders-like-you value (null below 10 reports).
+    for (const m of [...body.apply_now, ...body.coming_up, ...body.not_ready, ...body.needs_info]) {
+      expect(m).toHaveProperty('past_results_text');
+      expect(m).toHaveProperty('fly', null);
+      expect(m.source_url).toBeTruthy();
+    }
   });
 
   it('allow 5 attempts per 15 minutes, then block', async () => {

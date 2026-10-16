@@ -9,9 +9,13 @@ import { planFor, visibleOpportunities } from '../_shared/founders.ts';
 export const PASSWORD_ATTEMPTS = 5;
 export const PASSWORD_WINDOW_SECONDS = 15 * 60;
 
-function publicMatch(m: Match) {
-  const o = m.opportunity;
+type Fly = Map<string, { reported: number; won: number }>;
+
+function publicMatch(m: Match, fly: Fly) {
+  const o = m.opportunity as Match['opportunity'] & { id: string };
   return {
+    past_results_text: o.past_results_text ?? null, past_results_count: o.past_results_count ?? null, past_results_year: o.past_results_year ?? null,
+    fly: fly.get(o.id) ?? null,
     slug: o.slug, name: o.name, organizer: o.organizer, type: o.type, amount_min: o.amount_min, amount_max: o.amount_max,
     equity_required: o.equity_required, deadline_type: o.deadline_type, window: m.window, source_url: o.source_url,
     last_verified_at: o.last_verified_at, verification_status: o.verification_status,
@@ -53,12 +57,20 @@ Deno.serve(async (req) => {
   await db.from('share_links').update({ open_count: link.open_count + 1 }).eq('id', link.id);
   await db.from('events').insert({ name: 'share_opened', user_id: link.user_id });
   const nonEquity = { apply_now: r.plan.apply_now, coming_up: r.plan.coming_up };
+  // Founders like you, for the plan owner's stage and sector. The database returns nothing below 10 reports.
+  const shownIds = [...r.plan.apply_now, ...r.plan.coming_up, ...r.plan.not_ready, ...r.plan.needs_info].map((m) => (m.opportunity as { id: string }).id);
+  const fly: Fly = new Map();
+  if (r.profile.stage && r.profile.sector && shownIds.length) {
+    const { data: rows } = await db.rpc('founders_like_you_many', { opps: shownIds, p_stage: r.profile.stage, p_sector: r.profile.sector });
+    for (const row of rows ?? []) fly.set(row.opportunity_id, { reported: row.reported, won: row.won });
+  }
+  const pm = (m: Match) => publicMatch(m, fly);
   return json(req, {
     today: r.plan.today,
     totals: (({ total, openNow, openingLater, count, undisclosed, equity }) => ({ total, openNow, openingLater, count, undisclosed: undisclosed.length, equity: equity.length }))(computeTotals(nonEquity)),
-    apply_now: r.plan.apply_now.map(publicMatch),
-    coming_up: r.plan.coming_up.map(publicMatch),
-    not_ready: r.plan.not_ready.map(publicMatch),
-    needs_info: r.plan.needs_info.map(publicMatch),
+    apply_now: r.plan.apply_now.map(pm),
+    coming_up: r.plan.coming_up.map(pm),
+    not_ready: r.plan.not_ready.map(pm),
+    needs_info: r.plan.needs_info.map(pm),
   });
 });
