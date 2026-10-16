@@ -68,3 +68,40 @@ export async function insertOpportunity(overrides: Record<string, unknown> = {})
   if (error) throw error;
   return data;
 }
+
+/** Calls a local Edge Function, retrying briefly while `supabase functions serve` boots the worker. */
+export async function callFunction(name: string, opts: { token?: string; body?: unknown; method?: string; query?: string } = {}): Promise<Response> {
+  const env = localEnv();
+  const url = `${env.API_URL}/functions/v1/${name}${opts.query ?? ''}`;
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: opts.method ?? (opts.body === undefined ? 'GET' : 'POST'),
+        headers: {
+          'content-type': 'application/json',
+          Authorization: `Bearer ${opts.token ?? env.ANON_KEY}`,
+          origin: 'http://localhost:5173',
+        },
+        body: opts.body === undefined ? undefined : JSON.stringify(opts.body),
+        redirect: 'manual',
+      });
+      if (res.status === 503 && attempt < 10) { await new Promise((r) => setTimeout(r, 1000)); continue; }
+      return res;
+    } catch (e) {
+      if (attempt >= 10) throw e;
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+  }
+}
+
+export async function signedInAdmin(tag = 'admin'): Promise<{ client: SupabaseClient; id: string; email: string; token: string }> {
+  const u = await signedInUser(tag);
+  await withDb((db) => db.query('insert into public.admins (email) values ($1) on conflict do nothing', [u.email]));
+  const { data } = await u.client.auth.getSession();
+  return { ...u, token: data.session!.access_token };
+}
+
+export async function tokenOf(client: SupabaseClient): Promise<string> {
+  const { data } = await client.auth.getSession();
+  return data.session!.access_token;
+}

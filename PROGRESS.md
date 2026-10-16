@@ -12,8 +12,11 @@ Plan approved 2026-10-15 with every suggested default in PLAN.md section 5. Admi
 - **Step 4: `ramp()`** with the three spec values tested, plus `urgencyT` and `readinessT` mappings. `npm run contrast` measures 19 token pairs read from the CSS: all pass.
 - Unit tests: 75 of 75. DB tests: 47 of 47. Build passes.
 
+- **Step 5: admin.** `/admin` (opportunity list, full create and edit form for every field with JSON validation, Mark verified), `/admin/import` (check, per-row reasons, diff and overwrite prompt, report), `/admin/verification`. `csv-import` Edge Function plus `admin_import_opportunity` (one transaction per row, always unverified). Seed: 5 EXAMPLE rows generated with `data/examples.csv` from `scripts/examples.ts`, tested to match. Magic-link sign-in and callback built here because admin needs them. Verified in the browser: magic link from the local inbox signs in, admin list loads, CSV preview shows 1 diff and 1 rejected row with 3 reasons, import reports "Imported 0. Updated 1. Skipped 4. Rejected 1.", Mark verified wrote status, date and email, an invalid rule is refused before saving, no console errors. Unit 88 of 88, DB and function 52 of 52.
+- Local dev note: after changing `supabase/config.toml`, run `npx supabase stop` then `npx supabase start` (a db reset does not reload auth settings).
+
 ## Next
-- Step 5: admin opportunity form, CSV import with validation report, verification queue, seed examples.
+- Step 6: Layer 0 intake and preview.
 
 ## Open questions
 - None.
