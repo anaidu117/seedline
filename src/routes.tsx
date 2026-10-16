@@ -3,6 +3,7 @@ import { AuthProvider } from './lib/auth.tsx';
 import { Layout } from './components/Layout.tsx';
 import Landing from './pages/Landing.tsx';
 import NotFound from './pages/NotFound.tsx';
+import ErrorPage from './pages/ErrorPage.tsx';
 import SignIn from './pages/SignIn.tsx';
 import AuthCallback from './pages/AuthCallback.tsx';
 import Start from './pages/Start.tsx';
@@ -14,6 +15,9 @@ import MaterialsPage from './pages/Materials.tsx';
 import AnswersPage from './pages/Answers.tsx';
 import DraftPage from './pages/Draft.tsx';
 import ApplicationsPage from './pages/Applications.tsx';
+import CalendarPage from './pages/Calendar.tsx';
+import Checkin from './pages/Checkin.tsx';
+import Unsubscribe from './pages/Unsubscribe.tsx';
 import { AdminLayout } from './pages/admin/AdminLayout.tsx';
 import OpportunityList from './pages/admin/OpportunityList.tsx';
 import OpportunityForm from './pages/admin/OpportunityForm.tsx';
@@ -27,8 +31,10 @@ function Root() {
 export const router = createBrowserRouter([
   {
     element: <Root />,
+    errorElement: <ErrorPage />,
     children: [{
       element: <Layout />,
+      errorElement: <ErrorPage />,
       children: [
         { path: '/', element: <Landing /> },
         { path: '/signin', element: <SignIn /> },
@@ -42,6 +48,9 @@ export const router = createBrowserRouter([
         { path: '/answers', element: <AnswersPage /> },
         { path: '/draft/:slug', element: <DraftPage /> },
         { path: '/applications', element: <ApplicationsPage /> },
+        { path: '/calendar', element: <CalendarPage /> },
+        { path: '/checkin', element: <Checkin /> },
+        { path: '/unsubscribe', element: <Unsubscribe /> },
         {
           path: '/admin',
           element: <AdminLayout />,

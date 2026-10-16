@@ -25,8 +25,12 @@ Plan approved 2026-10-15 with every suggested default in PLAN.md section 5. Admi
 - **Step 11: draft view** (`/draft/:slug`). Verified: problem filled from the medium version (long is over 150 words), solution from the short version, missing answer flagged, unmapped question flagged, live count "34 of 30 words, 4 over the limit", draft persists after reload. 7 unit tests in `shared/drafts/fitAnswer.test.ts`.
 - **Step 12: applications tracker** (`/applications`). Verified: status change to Won, amount "$2,500" saved, database snapshot stage pilot_users and sector health_biotech at application, `reported_at` set, events written.
 
+- **Step 13: calendar** (`/calendar`). Month grid plus deadline list, urgency dots from `ramp()`, per-opportunity Google Calendar link and `.ics` (step 9), "Download all deadlines", private feed via `rotate_calendar_token` (raw token shown once, SHA-256 stored) served by `calendar-feed`. Verified in the browser: feed link returns 200 `text/calendar` with 6 events. Tests: right token works, wrong token 404, rotating the token turns the old link off; `shared/ics.test.ts` (4).
+- **Step 14: emails.** `send-digest` (weekly, only when something changed), `send-reminders` (14 and 3 days before saved deadlines, once each), `send-checkins` (signed single-use links, all buttons in one email share one token row), `checkin`, `unsubscribe` (app page and RFC 8058 one-click), Resend in production, local Mailpit when no key. `pg_cron` jobs registered (URL and secret from Vault). `tests/functions/emails.test.ts` 14 of 14: cron secret required; check-in updates once, reuse rejected (409), the other button rejected, expired rejected, expired database row rejected, forged rejected; outcome check-in with optional amount; reminders once per window; digest sends, then nothing when unchanged, then again on a new match; one-click unsubscribe; forged unsubscribe rejected. `shared/signedToken.test.ts` (7). Browser: check-in page shows "This link is not valid." for a bad link.
+- Also fixed: a stored session for a deleted account now signs out cleanly instead of failing; unexpected page errors show a friendly error page.
+
 ## Next
-- Step 13: calendar view, private feed.
+- Step 15: share links.
 
 ## Open questions
 - None.

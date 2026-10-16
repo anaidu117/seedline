@@ -21,7 +21,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!active) return;
+      if (data.session) {
+        // A stored session can outlive its account (deleted user). Ask the server, and sign out if it is gone.
+        const { error } = await supabase.auth.getUser();
+        if (error && (error.status === 401 || error.status === 403 || /not.*exist|not found/i.test(error.message))) {
+          await supabase.auth.signOut({ scope: 'local' });
+          if (active) { setSession(null); setLoading(false); }
+          return;
+        }
+      }
       if (!active) return;
       setSession(data.session);
       setLoading(false);
