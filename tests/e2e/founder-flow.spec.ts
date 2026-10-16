@@ -11,7 +11,7 @@ test('a new visitor goes from intake to a full plan and through every founder pa
 
   // Layer 0, no account
   await page.goto('/');
-  await page.getByRole('link', { name: 'Find my funding' }).click();
+  await page.getByRole('main').getByRole('link', { name: 'Find my funding' }).click();
   await page.getByLabel('Which school are you connected to?').selectOption('unc');
   await page.getByLabel('What is your connection to that school?').selectOption('grad');
   await page.getByLabel('Which state are you based in?').selectOption('NC');

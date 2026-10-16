@@ -43,6 +43,7 @@ function targetGroupResult(o: Opportunity, profile: FounderProfile): { targeted:
       outcome: 'fail',
       requirement: `Open to: ${who}`,
       gap: `This program is only open to: ${who}.`,
+      fit: '',
     },
   };
 }

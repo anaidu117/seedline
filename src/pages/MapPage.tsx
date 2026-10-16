@@ -49,6 +49,19 @@ export default function MapPage() {
 
   const fly = useFoundersLikeYou(shown.map(({ o }) => o.id), who);
 
+  const activeFilters = ['type', 'geography', 'sector', 'stage', 'deadline'].filter((k) => params.get(k)).length;
+  const [filtersOpen, setFiltersOpen] = useState(() => {
+    try { return window.matchMedia('(min-width: 768px)').matches; } catch { return true; }
+  });
+  // The toggle is hidden on wide screens, so make sure the filters are open there.
+  useEffect(() => {
+    let mq: MediaQueryList;
+    try { mq = window.matchMedia('(min-width: 768px)'); } catch { return; }
+    const onChange = () => { if (mq.matches) setFiltersOpen(true); };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
   const set = (k: string, v: string) => {
     const next = new URLSearchParams(params);
     if (v && v !== 'any') next.set(k, v); else next.delete(k);
@@ -70,18 +83,25 @@ export default function MapPage() {
       <PageTitle lead="Every verified grant, competition, fellowship and program in Seedline. No sign-in needed. Each listing shows where the information came from and when it was last checked.">
         Funding map
       </PageTitle>
-      <form className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5" onSubmit={(e) => e.preventDefault()} aria-label="Filter programs">
-        {select('type', 'Type', OPPORTUNITY_TYPES)}
-        {select('geography', 'Geography', GEOGRAPHY_LEVELS)}
-        {select('sector', 'Sector', SECTORS)}
-        {select('stage', 'Stage', STAGES)}
-        <div>
-          <label htmlFor="m-deadline" className="field-label">Deadline</label>
-          <select id="m-deadline" className="input" value={filters.deadline} onChange={(e) => set('deadline', e.target.value)}>
-            {DEADLINE_FILTERS.map((d) => <option key={d} value={d}>{DEADLINE_FILTER_LABELS[d]}</option>)}
-          </select>
-        </div>
-      </form>
+      {/* On phones the filters fold away so results start near the top; on wider screens they stay open. */}
+      <details className="mb-6 rounded-xl border border-line p-3 md:border-0 md:p-0" open={filtersOpen}
+        onToggle={(e) => setFiltersOpen((e.target as HTMLDetailsElement).open)}>
+        <summary className="flex min-h-11 cursor-pointer items-center font-semibold md:hidden">
+          Filters{activeFilters > 0 ? ` (${activeFilters} on)` : ''}
+        </summary>
+        <form className="grid gap-4 pt-3 sm:grid-cols-2 lg:grid-cols-5 md:pt-0" onSubmit={(e) => e.preventDefault()} aria-label="Filter programs">
+          {select('type', 'Type', OPPORTUNITY_TYPES)}
+          {select('geography', 'Geography', GEOGRAPHY_LEVELS)}
+          {select('sector', 'Sector', SECTORS)}
+          {select('stage', 'Stage', STAGES)}
+          <div>
+            <label htmlFor="m-deadline" className="field-label">Deadline</label>
+            <select id="m-deadline" className="input" value={filters.deadline} onChange={(e) => set('deadline', e.target.value)}>
+              {DEADLINE_FILTERS.map((d) => <option key={d} value={d}>{DEADLINE_FILTER_LABELS[d]}</option>)}
+            </select>
+          </div>
+        </form>
+      </details>
       {error && <Alert tone="error">We couldn't load the map: {error}</Alert>}
       {!rows && !error && <Loading />}
       {rows && (

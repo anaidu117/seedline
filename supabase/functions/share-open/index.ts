@@ -19,7 +19,7 @@ function publicMatch(m: Match, fly: Fly) {
     slug: o.slug, name: o.name, organizer: o.organizer, type: o.type, amount_min: o.amount_min, amount_max: o.amount_max,
     equity_required: o.equity_required, deadline_type: o.deadline_type, window: m.window, source_url: o.source_url,
     last_verified_at: o.last_verified_at, verification_status: o.verification_status,
-    fits: m.passed.map((r) => r.requirement), gaps: [...m.failed, ...m.unknown].map((r) => r.gap),
+    fits: m.passed.map((r) => r.fit), gaps: [...m.failed, ...m.unknown].map((r) => r.gap),
   };
 }
 

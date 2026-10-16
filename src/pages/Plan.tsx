@@ -153,7 +153,8 @@ function PlanView({ data, reload, userId }: { data: FounderData; reload: () => P
           {plan.not_ready.length === 0
             ? <p className="mt-2 text-muted">Nothing here. You meet the readiness bar for everything you're eligible for.</p>
             : <ul className="mt-2 divide-y divide-line border-y border-line">{plan.not_ready.map((m) => (
-                <CompactRow key={m.opportunity.slug} match={m} today={today} fly={flyFor(fly, m.opportunity.id)} detail={<GapList match={m} />} />
+                <CompactRow key={m.opportunity.slug} match={m} today={today} fly={flyFor(fly, m.opportunity.id)} detail={<GapList match={m} />}
+                  action={m.unknown.length > 0 ? <Link className="btn btn-quiet" to="/profile">Answer in profile</Link> : undefined} />
               ))}</ul>}
         </section>
 

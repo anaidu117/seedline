@@ -78,6 +78,18 @@ describe('evaluateRule: three-valued results', () => {
   });
 });
 
+describe('fit text uses the founder answer', () => {
+  it('names the founder value for lists and ranges, and keeps simple rules as written', () => {
+    expect(evaluateRule(rule({ field: 'student_status', op: 'in', value: ['undergrad', 'grad'] }), founder).fit).toBe('Student status is Graduate student');
+    expect(evaluateRule(rule({ field: 'stage', op: 'gte', value: 'idea' }), founder).fit).toBe('Stage is Prototype (needs idea or later)');
+    expect(evaluateRule(rule({ field: 'school', op: 'eq', value: 'unc' }), founder).fit).toBe('School is UNC Chapel Hill');
+    expect(evaluateRule(rule({ field: 'state', op: 'not_in', value: ['SC'] }), founder).fit).toBe('State is North Carolina');
+  });
+  it('is empty for rules that did not pass', () => {
+    expect(evaluateRule(rule({ field: 'school', op: 'eq', value: 'duke' }), founder).fit).toBe('');
+  });
+});
+
 describe('statuses', () => {
   it('all rules pass: eligible', () => {
     const m = matchOpportunity(opp({ eligibility_rules: [rule({ field: 'school', op: 'eq', value: 'unc' })] }), founder, TODAY);

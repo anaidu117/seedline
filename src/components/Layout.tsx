@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, ScrollRestoration } from 'react-router';
 import { Disclaimer } from './Disclaimer.tsx';
+import { useAuth } from '../lib/auth.tsx';
 
-const NAV = [
+// Founder pages only appear once signed in; visitors see the public pages and a way in.
+const FOUNDER_NAV = [
   { to: '/plan', label: 'Plan' },
   { to: '/calendar', label: 'Calendar' },
   { to: '/applications', label: 'Applications' },
   { to: '/materials', label: 'Materials' },
   { to: '/answers', label: 'Answers' },
   { to: '/map', label: 'Funding map' },
+  { to: '/profile', label: 'Profile' },
+];
+const VISITOR_NAV = [
+  { to: '/map', label: 'Funding map' },
+  { to: '/start', label: 'Find my funding' },
+  { to: '/signin', label: 'Sign in' },
 ];
 
 export function Logo() {
@@ -22,6 +30,19 @@ export function Logo() {
 
 export function Layout() {
   const [open, setOpen] = useState(false);
+  const { user, isAdmin } = useAuth();
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const nav = user ? [...FOUNDER_NAV, ...(isAdmin ? [{ to: '/admin', label: 'Admin' }] : [])] : VISITOR_NAV;
+
+  // Escape closes the mobile menu and returns focus to its button.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setOpen(false); menuButton.current?.focus(); }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open]);
   return (
     <div className="flex min-h-dvh flex-col">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-bg focus:p-3">Skip to content</a>
@@ -29,6 +50,7 @@ export function Layout() {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-2 md:px-6">
           <Logo />
           <button
+            ref={menuButton}
             type="button"
             className="btn btn-quiet md:hidden"
             aria-expanded={open}
@@ -39,7 +61,7 @@ export function Layout() {
           </button>
           <nav id="main-nav" aria-label="Main" className={`${open ? 'block' : 'hidden'} absolute left-0 right-0 top-[61px] z-40 border-b border-line bg-bg px-4 pb-3 md:static md:block md:border-0 md:p-0`}>
             <ul className="flex flex-col gap-1 md:flex-row md:items-center md:gap-1">
-              {NAV.map((n) => (
+              {nav.map((n) => (
                 <li key={n.to}>
                   <NavLink
                     to={n.to}
@@ -52,11 +74,6 @@ export function Layout() {
                   </NavLink>
                 </li>
               ))}
-              <li>
-                <NavLink to="/profile" onClick={() => setOpen(false)} className={({ isActive }) => `flex min-h-11 items-center rounded-lg px-3 font-semibold no-underline ${isActive ? 'bg-blue-tint text-navy' : 'text-navy hover:bg-surface'}`}>
-                  Profile
-                </NavLink>
-              </li>
             </ul>
           </nav>
         </div>

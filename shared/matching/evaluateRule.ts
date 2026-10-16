@@ -97,6 +97,8 @@ export function evaluateRule(rule: Rule, profile: FounderProfile): RuleResult {
   const outcome = outcomeOf(rule, profile);
   const requirement = describeRequirement(rule);
   let gap = '';
+  let fit = '';
+  if (outcome === 'pass') fit = fitText(rule, profile, requirement);
   if (outcome === 'fail') {
     if (rule.note) {
       gap = rule.note;
@@ -112,7 +114,23 @@ export function evaluateRule(rule: Rule, profile: FounderProfile): RuleResult {
       gap = `Mark your milestones in your profile.`;
     }
   }
-  return { rule, outcome, requirement, gap };
+  return { rule, outcome, requirement, gap, fit };
+}
+
+/** A passed rule described with the founder's answer: "Stage is Prototype (needs Idea or later)". */
+function fitText(rule: Rule, profile: FounderProfile, requirement: string): string {
+  const v = profileValue(profile, rule.field);
+  const label = fieldLabel(rule.field);
+  switch (rule.op) {
+    case 'in': case 'not_in':
+      return `${label} is ${showValue(rule.field, v)}`;
+    case 'gte': case 'lte': {
+      const need = requirement.slice(requirement.indexOf(' is ') >= 0 ? requirement.indexOf(' is ') + 4 : label.length + 1);
+      return `${label} is ${showValue(rule.field, v)} (needs ${lowerFirst(need)})`;
+    }
+    default:
+      return requirement;
+  }
 }
 
 /** Which profile layer to fill in to resolve an unknown rule. */

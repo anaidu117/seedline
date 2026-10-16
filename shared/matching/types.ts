@@ -22,6 +22,8 @@ export interface RuleResult {
   requirement: string;
   /** For fail: what is missing. For unknown: what to answer. Empty for pass. */
   gap: string;
+  /** For pass: why it fits, in terms of the founder's own answer. Empty otherwise. */
+  fit: string;
 }
 
 /**

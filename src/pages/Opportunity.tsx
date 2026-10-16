@@ -78,7 +78,7 @@ function Detail({ o }: { o: OpportunityRow }) {
         ) : !match ? <Loading /> : (
           <div className="mt-2 flex flex-col gap-3">
             <p className="font-semibold">{statusText(match)}</p>
-            {match.passed.length > 0 && <List title="You meet" items={match.passed.map((r) => r.requirement)} />}
+            {match.passed.length > 0 && <List title="You meet" items={match.passed.map((r) => r.fit)} />}
             {match.failed.length > 0 && <List title="What's missing" items={match.failed.map((r) => r.gap)} tone="gap" />}
             {match.unknown.length > 0 && <List title="We need to know" items={match.unknown.map((r) => r.gap)} />}
             {match.unknown.length > 0 && <Link className="btn btn-secondary self-start" to="/profile">Answer in my profile</Link>}

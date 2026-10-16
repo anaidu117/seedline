@@ -96,7 +96,7 @@ export function OpportunityCard({ match, today, readiness, actions, delay, fly }
       </div>
       <MetaLine o={o} />
       {match.passed.length > 0 && (
-        <p className="mt-2"><span className="font-semibold">Why it fits: </span>{match.passed.map((r) => r.requirement).join('. ')}.</p>
+        <p className="mt-2"><span className="font-semibold">Why it fits: </span>{match.passed.map((r) => r.fit).join('. ')}.</p>
       )}
       {readiness && <div className="mt-2"><ReadinessLine r={readiness} /></div>}
       <div className="mt-2"><ResultsLines o={o} fly={fly} /></div>

@@ -8,7 +8,7 @@ export default function Landing() {
           Find the grants, competitions and programs you should apply to, and in what order.
         </h1>
         <p className="mt-5 max-w-2xl text-[length:var(--text-card)] text-muted">
-          Answer a few questions about your startup. Seedline shows what you qualify for, why, and what to apply to first. No equity, no fees.
+          Answer a few questions about your startup. Seedline shows what you qualify for, why, and what to apply to first. Seedline is free and never takes a share of anything you win.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/start" className="btn btn-primary">Find my funding</Link>
