@@ -67,7 +67,7 @@ export default function CsvImport() {
           <ul className="divide-y divide-line rounded-xl border border-line">
             {preview.rows.map((r) => (
               <li key={r.line} className="px-4 py-3">
-                <p className="font-semibold">Line {r.line}: {r.slug || '(no slug)'} <span className={`chip ml-2 ${r.ok ? (r.exists ? 'bg-amber-tint text-amber-ink' : 'bg-blue-tint text-navy') : 'bg-error-tint text-error'}`}>{r.ok ? (r.exists ? 'Already exists' : 'New') : 'Rejected'}</span></p>
+                <p className="font-semibold">Line {r.line}: {r.slug || '(no slug)'} <span className={`chip ml-2 ${r.ok ? (r.exists ? 'border border-line-strong bg-surface text-navy' : 'bg-blue-tint text-navy') : 'bg-error-tint text-error'}`}>{r.ok ? (r.exists ? 'Already exists' : 'New') : 'Rejected'}</span></p>
                 {r.errors && <ul className="mt-1 list-disc pl-5 text-error">{r.errors.map((e) => <li key={e}>{e}</li>)}</ul>}
                 {r.exists && (
                   <div className="mt-2">

@@ -24,7 +24,7 @@ export default function VerificationQueue() {
           {rows.map((r) => (
             <li key={r.id} className="flex flex-col gap-2 px-4 py-3 md:flex-row md:items-center">
               <div className="min-w-0 flex-1">
-                <Link to={`/admin/opportunities/${r.id}`} className="font-semibold">{r.name}</Link>
+                <Link to={`/admin/opportunities/${r.id}`} className="link-target font-semibold">{r.name}</Link>
                 <p className="text-[length:var(--text-meta)] text-muted">{valueLabel(r.type)} · Source: <a href={r.source_url} target="_blank" rel="noreferrer">{r.source_url}</a></p>
               </div>
               <VerificationChip status={r.verification_status} />

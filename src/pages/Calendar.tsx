@@ -135,7 +135,7 @@ function Month({ month, items, today }: { month: string; items: Item[]; today: I
                 <span className="tabular block font-display text-[length:var(--text-section)] font-bold leading-none">{it.date.slice(8, 10).replace(/^0/, '')}</span>
               </div>
               <div className="min-w-0 flex-1">
-                <Link to={`/opportunity/${it.match.opportunity.slug}`} className="font-semibold">{it.match.opportunity.name}</Link>
+                <Link to={`/opportunity/${it.match.opportunity.slug}`} className="link-target font-semibold">{it.match.opportunity.name}</Link>
                 <p className="text-[length:var(--text-meta)] text-muted">
                   <span aria-hidden="true" className="mr-1 inline-block size-2 rounded-full align-middle" style={{ background: dot(it.date) }} />
                   {it.date === today ? 'Closes today' : `Closes ${formatDate(it.date)}`}{it.match.window.expected ? ' (expected)' : ''}{it.saved ? ' · Saved' : ''}

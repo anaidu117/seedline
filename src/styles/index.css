@@ -10,6 +10,7 @@
   --color-navy: #13294b;
   --color-muted: #4a5d78;
   --color-carolina: #4b9cd3;
+  --color-carolina-hover: #6aaedb;
   --color-link: #1d6aa5;
   --color-amber: #f2a541;
   --color-amber-ink: #8a4b00;
@@ -46,6 +47,8 @@
 
 @layer components {
   .tabular { font-variant-numeric: tabular-nums; }
+  /* A link that stands on its own (not inside a sentence) gets a 44px tap target. */
+  .link-target { display: inline-flex; align-items: center; min-height: 44px; }
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
     min-height: 44px; padding: 0.625rem 1.125rem; border-radius: 10px;
@@ -55,7 +58,7 @@
   .btn:disabled { cursor: not-allowed; opacity: 0.6; }
   /* Navy text on Carolina blue measures 4.84:1. White on Carolina blue fails (3.00:1). */
   .btn-primary { background: var(--color-carolina); color: var(--color-navy); }
-  .btn-primary:hover:not(:disabled) { background: #6aaedb; }
+  .btn-primary:hover:not(:disabled) { background: var(--color-carolina-hover); }
   .btn-secondary { background: var(--color-bg); color: var(--color-navy); border-color: var(--color-line-strong); }
   .btn-secondary:hover:not(:disabled) { background: var(--color-surface); }
   .btn-quiet { background: transparent; color: var(--color-link); padding-inline: 0.5rem; }
@@ -69,6 +72,9 @@
     border: 1px solid var(--color-line-strong); background: var(--color-bg); color: var(--color-navy);
   }
   .input:focus-visible { outline-offset: 0; }
+  /* Date and month inputs focus an inner segment, so :focus-visible never matches. Show the ring on :focus. */
+  input[type="date"].input:focus, input[type="month"].input:focus,
+  input[type="date"].input:focus-within, input[type="month"].input:focus-within { outline: 3px solid var(--color-link); outline-offset: 0; }
   textarea.input { min-height: 7rem; line-height: 1.5; }
 
   .chip {

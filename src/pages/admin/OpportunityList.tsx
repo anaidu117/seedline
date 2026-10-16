@@ -48,13 +48,13 @@ export default function OpportunityList() {
           {shown.map((r) => (
             <li key={r.id} className="flex flex-col gap-1 px-4 py-3 md:flex-row md:items-center md:gap-4">
               <div className="min-w-0 flex-1">
-                <Link to={`/admin/opportunities/${r.id}`} className="font-semibold">{r.name}</Link>
+                <Link to={`/admin/opportunities/${r.id}`} className="link-target font-semibold">{r.name}</Link>
                 <p className="text-[length:var(--text-meta)] text-muted">{r.organizer} · {valueLabel(r.type)} · {amountLine(r.amount_min, r.amount_max)}</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <VerificationChip status={r.verification_status} />
                 {r.archived && <span className="chip bg-surface text-muted">Archived</span>}
-                {!r.archived && r.verification_status !== 'unverified' && isStale(r) && <span className="chip bg-amber-tint text-amber-ink">May be outdated</span>}
+                {!r.archived && r.verification_status !== 'unverified' && isStale(r) && <span className="chip border border-line-strong bg-surface text-navy">May be outdated</span>}
                 {r.organizer_edited_at && <span className="chip bg-blue-tint text-navy">Organizer edit to review</span>}
               </div>
             </li>

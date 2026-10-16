@@ -52,7 +52,7 @@ function Detail({ o }: { o: OpportunityRow }) {
 
   return (
     <Page narrow>
-      <p className="mb-2"><Link to={user ? '/plan' : '/map'}>{user ? 'Back to my plan' : 'Back to the funding map'}</Link></p>
+      <p className="mb-2"><Link className="link-target" to={user ? '/plan' : '/map'}>{user ? 'Back to my plan' : 'Back to the funding map'}</Link></p>
       <header className="flex flex-col gap-2">
         <h1 className="text-[length:var(--text-page)]">{o.name}</h1>
         <MetaLine o={o} />
@@ -171,7 +171,7 @@ function List({ title, items, tone }: { title: string; items: string[]; tone?: '
   return (
     <div>
       <p className="font-semibold">{title}</p>
-      <ul className={`mt-1 list-disc pl-5 ${tone === 'gap' ? 'marker:text-amber-ink' : ''}`}>{items.map((t) => <li key={t}>{t}</li>)}</ul>
+      <ul className={`mt-1 list-disc pl-5 ${tone === 'gap' ? 'marker:text-navy' : ''}`}>{items.map((t) => <li key={t}>{t}</li>)}</ul>
     </div>
   );
 }

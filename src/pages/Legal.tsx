@@ -5,7 +5,7 @@ import { Page } from '../components/ui.tsx';
 const CONTACT = 'the contact email listed on this page once Seedline launches';
 
 function DraftBanner() {
-  return <p className="mb-6 rounded-lg border border-amber bg-amber-tint px-4 py-3 font-semibold text-amber-ink">Draft, not binding. This page is being reviewed and may change.</p>;
+  return <p className="mb-6 rounded-lg border border-line-strong bg-surface px-4 py-3 font-semibold text-navy">Draft, not binding. This page is being reviewed and may change.</p>;
 }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {

@@ -19,7 +19,7 @@ export function contrast(a: string, b: string): number {
 // [foreground, background, minimum, where it is used]
 const PAIRS: [string, string, number, string][] = [
   ['navy', 'bg', 4.5, 'body text'], ['navy', 'surface', 4.5, 'text on gray sections'],
-  ['navy', 'blue-tint', 4.5, 'plan total band, active nav'], ['navy', 'carolina', 4.5, 'primary buttons'],
+  ['navy', 'blue-tint', 4.5, 'plan total band, active nav'], ['navy', 'carolina', 4.5, 'primary buttons'], ['navy', 'carolina-hover', 4.5, 'primary buttons on hover'],
   ['navy', 'amber', 4.5, 'deadline fill chips'], ['navy', 'amber-tint', 4.5, 'text on deadline chips'],
   ['muted', 'bg', 4.5, 'secondary text'], ['muted', 'surface', 4.5, 'secondary text on gray'],
   ['muted', 'blue-tint', 4.5, 'secondary text on the total band'],

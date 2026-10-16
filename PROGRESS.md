@@ -38,11 +38,33 @@ Plan approved 2026-10-15 with every suggested default in PLAN.md section 5. Admi
 - **Step 19: privacy, terms, 404, robots, headers, CSP.** `/privacy` and `/terms` marked "Draft, not binding.", describing only what the system does and naming Supabase, Resend, Cloudflare and Google Fonts. `public/robots.txt` allows `/` and `/map` only. `scripts/build-headers.ts` writes `dist/_headers` with a CSP built from the origins found in the built files and fails the build on any unreviewed origin. **No `unsafe-` directive is needed.** Verified with `wrangler pages dev dist` (the Cloudflare Pages runtime): all five headers present, SPA routes return the app, fonts and Turnstile work under the CSP, ramp colors render, no console errors. Also split rarely used pages into lazy chunks: main bundle 704 KB to 273 KB (83 KB gzipped).
 - Note: unknown URLs return HTTP 200 with the app's 404 page (normal for a single-page app on Pages).
 
+- **Step 20: accessibility and mobile pass, measured.** `tests/e2e/a11y.spec.ts` visits 29 routes (public, founder, admin) at 375x812 and 1280x800 and fails on: any horizontal overflow, any tap target under 44px (links inside a sentence are exempt, per WCAG 2.5.8), any element reached by Tab without a visible focus ring, any axe color-contrast violation, and rendered copy with em dashes, percentages, all-caps words (acronyms allowed) or uppercase styling. Found and fixed: card, map, list and back links under 44px; date inputs with no focus ring; amber used outside deadlines (now only through `ramp()`); the deadline chip tint was hand-picked (now `ramp()`). Final: 6 of 6 sweep runs pass. `tests/e2e/founder-flow.spec.ts` runs the whole founder flow in a browser, including a founder being refused at `/admin`: passes. `npm run contrast` 20 of 20 pairs. `npm run check:copy` 91 files clean.
+
+## Final numbers (from the last full run)
+- `npm test`: 110 of 110 (8 files)
+- `npm run test:db`: 90 of 90 (8 files: RLS, storage, enums, metrics, CSV import, emails and check-ins, share links, submissions and claims)
+- `npm run test:e2e`: 7 passed, 1 skipped by design (the founder flow runs at laptop width only)
+- `npm run build`: passes; CSP has no `unsafe-` directive
+- Local database reset to the clean seed afterwards: 5 EXAMPLE rows, all unverified, no users.
+
 ## Next
-- Step 20: accessibility and mobile pass, measured.
+- Prompt 4 (audit), then prompt 6 (deploy). Nothing is deployed. The hosted Supabase project has not been touched.
 
-## Open questions
-- None.
+## Needs your decision
+1. **Contact email** for the privacy and terms drafts, and for account deletion requests (PLAN Q14). They currently say the address will be listed at launch.
+2. **Rate limiting by IP** (submissions, check-ins, calendar feed) reads `cf-connecting-ip`, then the first `x-forwarded-for` entry. Whether Supabase's hosted proxy lets a client spoof that header must be checked at deploy. Share-password limits are per link and claims are per user, so those don't depend on it.
+3. **Tap targets:** links inside running sentences are treated as exempt (WCAG 2.5.8). Every standalone link, button and field is at least 44px. Say if you want sentence links enlarged too.
+4. **robots.txt** disallows `/opportunity/...` pages, as the spec says, so individual listings won't be indexed by search engines even though they're public. Confirm.
+5. **Seed in production:** `supabase db push` does not load `seed.sql`. Do you want the 5 EXAMPLE rows in production at all?
+6. **First weekly digest** only records a baseline of matches. It sends only if a deadline is within 14 days, and calls nothing "new" until the second week.
 
-## Stubbed or partial
-- Nav links point to routes that are not built yet (they show the 404 page until their step).
+## Genuinely blocked
+- Nothing blocks the local build. Deployment (prompt 6) needs your accounts: the hosted Supabase project and its database password, a Resend API key with a verified domain, Cloudflare Pages and Turnstile keys, and the domain.
+
+## Stubbed, partial or unverified
+- **Not deployed.** Headers were verified with `wrangler pages dev` locally, not on a live site.
+- **Edge Functions importing `shared/`** works under `supabase functions serve`. The deploy bundler has not been tried (risk R1).
+- **Emails** were verified through the local Mailpit inbox, not through Resend.
+- **Turnstile** was verified with Cloudflare's always-pass test keys only.
+- **Free-tier pause:** whether pg_cron activity keeps the project awake is unverified (README explains how to check).
+- **The organizer editor** covers content fields. Target groups and past winners stay admin-only.

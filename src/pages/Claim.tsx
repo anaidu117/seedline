@@ -122,7 +122,7 @@ function OrganizerEditor({ o }: { o: OpportunityRow }) {
   return (
     <Page narrow>
       <PageTitle lead="You manage this listing. Changes go live right away and show a Verified by organizer badge. Seedline reviews every change.">Edit {o.name}</PageTitle>
-      <p className="mb-6"><Link to={`/opportunity/${o.slug}`}>See the public listing</Link></p>
+      <p className="mb-6"><Link className="link-target" to={`/opportunity/${o.slug}`}>See the public listing</Link></p>
       <form onSubmit={save} className="grid gap-5 md:grid-cols-2">
         {text('name', 'Program name')}
         {text('organizer', 'Organizer')}

@@ -28,7 +28,7 @@ export default function ClaimsQueue() {
         <ul className="divide-y divide-line rounded-xl border border-line">
           {rows.map((c) => (
             <li key={c.id} className="flex flex-col gap-2 px-4 py-3">
-              <p className="font-semibold">{c.opportunity ? <Link to={`/admin/opportunities/${c.opportunity.id}`}>{c.opportunity.name}</Link> : 'Listing removed'}</p>
+              <p className="font-semibold">{c.opportunity ? <Link className="link-target" to={`/admin/opportunities/${c.opportunity.id}`}>{c.opportunity.name}</Link> : 'Listing removed'}</p>
               <p>{c.claimant_email} · {c.role_title}, {c.organization}</p>
               {c.message && <p className="text-[length:var(--text-meta)]">{c.message}</p>}
               <div className="flex flex-wrap gap-2">

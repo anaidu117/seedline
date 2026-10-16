@@ -80,7 +80,7 @@ export default function MapPage() {
               {shown.map(({ o, w }) => (
                 <li key={o.slug} className="flex flex-col gap-1 py-4">
                   <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                    <Link to={`/opportunity/${o.slug}`} className="font-display text-[length:var(--text-card)] font-bold">{o.name}</Link>
+                    <Link to={`/opportunity/${o.slug}`} className="inline-flex min-h-11 items-center font-display text-[length:var(--text-card)] font-bold">{o.name}</Link>
                     <DeadlineChip match={{ window: w, opportunity: o }} today={today} />
                   </div>
                   <MetaLine o={o} />

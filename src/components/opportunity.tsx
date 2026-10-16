@@ -8,7 +8,7 @@ import { ramp, readinessT, urgencyT } from '../../shared/ramp.ts';
 import { readinessText, type Match, type Opportunity, type Readiness } from '../../shared/matching/index.ts';
 import { isStale } from '../lib/opportunities.ts';
 
-/** Deadline with an urgency dot from ramp(). The text stays navy or amber ink for contrast. */
+/** Deadline chip. Its tint and dot come from ramp() (amber means close); the text stays navy for contrast. */
 export function DeadlineChip({ match, today }: { match: Pick<Match, 'window' | 'opportunity'>; today: IsoDate }) {
   const w = match.window;
   if (!w.closes) {
@@ -17,9 +17,11 @@ export function DeadlineChip({ match, today }: { match: Pick<Match, 'window' | '
   const opensLater = w.opens && w.opens > today;
   const days = daysBetween(today, w.closes);
   const label = opensLater ? `Opens ${formatDate(w.opens!)}` : days === 0 ? 'Closes today' : `Closes ${relativeDays(today, w.closes)}`;
+  // Urgency is ordinal, so both the tint and the dot come from ramp(). Text stays navy for contrast.
+  const t = opensLater ? 0 : urgencyT(days);
   return (
-    <span className={`chip ${days <= 14 && !opensLater ? 'bg-amber-tint text-amber-ink' : 'bg-surface text-navy'}`}>
-      <span aria-hidden="true" className="inline-block size-2.5 rounded-full" style={{ background: ramp(opensLater ? 0 : urgencyT(days)) }} />
+    <span className="chip text-navy" style={{ background: ramp(t, 0.16) }}>
+      <span aria-hidden="true" className="inline-block size-2.5 rounded-full" style={{ background: ramp(t) }} />
       {label}{w.expected ? ' (expected)' : ''}
     </span>
   );
@@ -47,7 +49,7 @@ export function SourceLine({ o }: { o: Pick<Opportunity, 'source_url' | 'last_ve
       Source: <a href={o.source_url} target="_blank" rel="noreferrer noopener" className="break-all">{hostOf(o.source_url)}</a>
       {' · '}{verified}
       {o.verification_status === 'organizer_verified' && <span className="chip ml-2 bg-blue-tint text-navy">Verified by organizer</span>}
-      {isStale(o) && <span className="chip ml-2 bg-amber-tint text-amber-ink">May be outdated</span>}
+      {isStale(o) && <span className="chip ml-2 border border-line-strong bg-surface text-navy">May be outdated</span>}
     </p>
   );
 }
@@ -73,7 +75,7 @@ export function OpportunityCard({ match, today, readiness, actions, delay }: {
   return (
     <article className={`rounded-xl border border-line border-l-4 border-l-carolina bg-bg p-4 md:p-5 ${delay !== undefined ? 'rise-in' : ''}`} style={delay !== undefined ? { animationDelay: `${delay}ms` } : undefined}>
       <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-        <h3 className="text-[length:var(--text-card)]"><Link to={`/opportunity/${o.slug}`} className="text-navy">{o.name}</Link></h3>
+        <h3 className="text-[length:var(--text-card)]"><Link to={`/opportunity/${o.slug}`} className="inline-flex min-h-11 items-center text-navy">{o.name}</Link></h3>
         <DeadlineChip match={match} today={today} />
       </div>
       <MetaLine o={o} />
@@ -93,7 +95,7 @@ export function CompactRow({ match, today, detail, action }: { match: Match; tod
   return (
     <li className="flex flex-col gap-1 py-3 md:flex-row md:items-start md:gap-4">
       <div className="min-w-0 flex-1">
-        <Link to={`/opportunity/${o.slug}`} className="font-semibold">{o.name}</Link>
+        <Link to={`/opportunity/${o.slug}`} className="link-target font-semibold">{o.name}</Link>
         <p className="text-[length:var(--text-meta)] text-muted">{o.organizer} · <span className="tabular">{amountLine(o.amount_min, o.amount_max)}</span>{o.equity_required ? ' · Takes equity' : ''}</p>
         {detail && <div className="mt-1">{detail}</div>}
       </div>

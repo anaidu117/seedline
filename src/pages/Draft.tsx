@@ -65,7 +65,7 @@ function DraftInner() {
 
   return (
     <Page narrow>
-      <p className="mb-2"><Link to={`/opportunity/${o.slug}`}>Back to {o.name}</Link></p>
+      <p className="mb-2"><Link className="link-target" to={`/opportunity/${o.slug}`}>Back to {o.name}</Link></p>
       <PageTitle lead="Filled from your answer bank, using the longest version that fits each limit. Edit freely, then copy each answer into the organizer's form. Templates only, nothing is generated.">
         Draft for {o.name}
       </PageTitle>
@@ -87,7 +87,7 @@ function DraftInner() {
                     {q.maps_to ? ` · From your ${valueLabel(q.maps_to).toLowerCase()} answer` : ''}
                     {f?.status === 'filled' ? ` (${f.length} version)` : ''}
                   </p>
-                  {f?.status === 'flagged' && <p className="rounded-lg border border-amber bg-amber-tint px-3 py-2 text-amber-ink">{f.reason}</p>}
+                  {f?.status === 'flagged' && <p className="rounded-lg border border-line-strong bg-surface px-3 py-2 text-navy">{f.reason}</p>}
                   <textarea id={`q-${i}`} className="input" rows={Math.min(14, Math.max(4, Math.ceil(words / 12)))} value={texts[i] ?? ''}
                     onChange={(e) => setTexts(texts.map((t, j) => (j === i ? e.target.value : t)))} />
                   <div className="flex flex-wrap items-center gap-3">

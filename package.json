@@ -14,11 +14,13 @@
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
     "contrast": "tsx scripts/contrast.ts",
-    "check:copy": "tsx scripts/check-copy.ts"
+    "check:copy": "tsx scripts/check-copy.ts",
+    "qa": "npm test && npm run test:db && npm run build && npm run contrast && npm run check:copy && npm run test:e2e"
   },
   "type": "module",
   "private": true,
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.5",

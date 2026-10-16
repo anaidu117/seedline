@@ -41,5 +41,5 @@ export function Turnstile({ onToken, onError }: { onToken: (t: string) => void; 
     return () => { if (id && window.turnstile) window.turnstile.remove(id); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return <div ref={ref} className="min-h-[65px]" />;
+  return <div ref={ref} data-third-party="turnstile" className="min-h-[65px]" />;
 }

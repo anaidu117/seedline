@@ -78,7 +78,7 @@ export default function Preview() {
           </>
         )}
       </section>
-      <p className="mt-6"><Link to="/start">Change my answers</Link></p>
+      <p className="mt-6"><Link className="link-target" to="/start">Change my answers</Link></p>
       <Disclaimer className="mt-6" />
     </Page>
   );

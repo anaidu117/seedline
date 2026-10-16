@@ -29,7 +29,7 @@ export default function SubmissionsQueue() {
           {rows.map((s) => (
             <li key={s.id} className="flex flex-col gap-2 px-4 py-3">
               <p className="font-semibold">{s.payload.name} <span className="font-normal text-muted">by {s.payload.organizer}</span></p>
-              <p className="text-[length:var(--text-meta)]"><a href={s.payload.url} target="_blank" rel="noreferrer noopener" className="break-all">{s.payload.url}</a>{s.payload.deadline ? ` · Deadline ${s.payload.deadline}` : ''}{s.payload.amount_notes ? ` · ${s.payload.amount_notes}` : ''}</p>
+              <p className="text-[length:var(--text-meta)]"><a href={s.payload.url} target="_blank" rel="noreferrer noopener" className="link-target break-all">{s.payload.url}</a>{s.payload.deadline ? ` · Deadline ${s.payload.deadline}` : ''}{s.payload.amount_notes ? ` · ${s.payload.amount_notes}` : ''}</p>
               {s.payload.description && <p className="text-[length:var(--text-meta)]">{s.payload.description}</p>}
               <p className="text-[length:var(--text-meta)] text-muted">From {s.submitter_email}, {new Date(s.created_at).toLocaleDateString('en-US', { dateStyle: 'medium' })}</p>
               <div className="flex flex-wrap gap-2">

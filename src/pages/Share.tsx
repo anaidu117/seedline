@@ -101,7 +101,7 @@ export default function SharePage() {
               {d[g].map((m) => (
                 <li key={m.slug} className="flex flex-col gap-1 py-3">
                   <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                    <Link to={`/opportunity/${m.slug}`} className="font-semibold">{m.name}</Link>
+                    <Link to={`/opportunity/${m.slug}`} className="link-target font-semibold">{m.name}</Link>
                     <DeadlineChip match={{ window: m.window, opportunity: { deadline_type: m.deadline_type } as never }} today={d.today} />
                   </div>
                   <p className="text-[length:var(--text-meta)] text-muted">{m.organizer} · {valueLabel(m.type)} · <span className="tabular">{amountLine(m.amount_min, m.amount_max)}</span>{m.equity_required ? ' · Takes equity' : ''}</p>

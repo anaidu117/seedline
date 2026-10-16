@@ -80,7 +80,7 @@ function ApplicationsInner() {
                 <li key={r.id} className="rounded-xl border border-line p-4">
                   {o ? (
                     <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                      <Link to={`/opportunity/${o.slug}`} className="font-display text-[length:var(--text-card)] font-bold">{o.name}</Link>
+                      <Link to={`/opportunity/${o.slug}`} className="inline-flex min-h-11 items-center font-display text-[length:var(--text-card)] font-bold">{o.name}</Link>
                       <DeadlineChip match={{ window: windowFor(o, today), opportunity: o }} today={today} />
                     </div>
                   ) : <p className="text-muted">This listing is no longer available.</p>}
