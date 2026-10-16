@@ -74,6 +74,7 @@ const csp = Object.entries(directives)
   .join('; ');
 
 const headers = `/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
@@ -84,6 +85,17 @@ writeFileSync(join(DIST, '_headers'), headers);
 // Pages serves 404.html, with a 404 status, for any path not in _redirects. It is the app shell,
 // so the app's own "page not found" screen renders.
 writeFileSync(join(DIST, '404.html'), readFileSync(join(DIST, 'index.html'), 'utf8'));
+
+// sitemap.xml lists only the two public pages robots.txt allows. The origin comes from VITE_SITE_URL.
+const site = (process.env.VITE_SITE_URL ?? '').replace(/\/$/, '');
+if (/^https?:\/\//.test(site)) {
+  const urls = ['/', '/map'].map((p) => `  <url><loc>${site}${p}</loc></url>`).join('\n');
+  writeFileSync(join(DIST, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
+  writeFileSync(join(DIST, 'robots.txt'), `${readFileSync(join(DIST, 'robots.txt'), 'utf8').trimEnd()}\nSitemap: ${site}/sitemap.xml\n`);
+  console.log(`  sitemap.xml: ${site}/ and ${site}/map`);
+} else {
+  console.warn('build-headers: VITE_SITE_URL is not set, so no sitemap.xml was written.');
+}
 console.log(`build-headers: wrote dist/_headers from ${files.length} files`);
 console.log(`  external origins found: ${[...origins].sort().join(', ') || 'none'}`);
 console.log(`  CSP: ${csp}`);

@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seedline mockup: bold blocks plus deadline timeline</title>
+<!--
+  DESIGN MOCKUP FOR APPROVAL. Not wired to the app. Nothing in src/ was changed.
+  Direction: B (bold Carolina blue blocks) combined with C (a 9-month deadline timeline).
+  Data: the 5 EXAMPLE listings from supabase/seed.sql, as seen by an example founder
+  (UNC grad student, NC, prototype, health or biotech, incorporated). Every figure is derived from that.
+  Rules kept: amber only for deadlines and wins; every ordinal color from ramp(); text contrast >= 4.5:1;
+  sentence case; no em dashes; no percentages; "up to" totals; two separate results lines.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400..700&display=swap">
+<style>
+  :root {
+    --bg:#ffffff; --surface:#f4f7fa; --tint:#e6f1fa; --line:#d5e0eb; --line-strong:#6e87a3;
+    --navy:#13294b; --muted:#4a5d78; --carolina:#4b9cd3; --link:#1d6aa5;
+    --amber:#f2a541; --amber-ink:#8a4b00; --amber-tint:#fdf1df;
+    --display:"Bricolage Grotesque", "Avenir Next", sans-serif; --sans:"Figtree", "Avenir Next", sans-serif;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#dfe6ee; font-family:var(--sans); color:var(--navy); }
+  .note { max-width:1200px; margin:24px auto 0; padding:0 16px; font-size:14px; color:var(--muted); }
+  .note b { color:var(--navy); }
+  .board { display:flex; flex-wrap:wrap; gap:28px; justify-content:flex-start; padding:20px 16px 60px; max-width:1200px; margin:0 auto; overflow-x:auto; }
+  .screen { background:var(--bg); border-radius:20px; overflow:hidden; border:1px solid var(--line); }
+  .desk { width:1100px; max-width:100%; }
+  .phone { width:375px; }
+  .cap { font-size:13px; font-weight:600; color:var(--muted); margin:0 0 8px 4px; }
+  h1,h2,h3 { font-family:var(--display); font-weight:800; letter-spacing:-0.015em; line-height:1.04; margin:0; text-wrap:balance; }
+  p { margin:0; text-wrap:pretty; }
+  a { color:var(--link); }
+  .wrap { padding:0 40px; }
+  .phone .wrap { padding:0 16px; }
+
+  /* Header */
+  .hdr { display:flex; align-items:center; justify-content:space-between; padding:14px 40px; border-bottom:1px solid var(--line); }
+  .phone .hdr { padding:12px 16px; }
+  .logo { display:flex; align-items:center; gap:8px; font-family:var(--display); font-weight:800; font-size:22px; }
+  .nav { display:flex; gap:4px; }
+  .nav a { min-height:44px; display:inline-flex; align-items:center; padding:0 12px; border-radius:10px; font-weight:600; color:var(--navy); text-decoration:none; }
+  .nav a.on { background:var(--tint); }
+
+  /* B: the bold block */
+  .block { position:relative; overflow:hidden; background:var(--carolina); color:var(--navy); }
+  .block .shape { position:absolute; border-radius:50%; pointer-events:none; }
+  .block .content { position:relative; }
+  .btn { display:inline-flex; align-items:center; min-height:48px; padding:0 22px; border-radius:14px; font-weight:700; font-size:16px; text-decoration:none; border:2px solid transparent; }
+  .btn.primary { background:var(--navy); color:#fff; }
+  .btn.ghost { background:#fff; color:var(--navy); border-color:var(--navy); }
+  .btn.blue { background:var(--carolina); color:var(--navy); }
+  .btn.line { background:#fff; color:var(--navy); border-color:var(--line-strong); }
+
+  /* Type chips (categorical, not ordinal) */
+  .chip { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:3px 10px; font-size:13px; font-weight:700; }
+  .chip.type { background:var(--navy); color:#fff; }
+  .chip.type2 { background:var(--tint); color:var(--navy); }
+
+  /* C: the timeline */
+  .tl { position:relative; padding-top:48px; }
+  .tl .rail { display:flex; height:12px; border-radius:6px; overflow:hidden; }
+  .tl .rail span { flex:1; }
+  .tl .months { display:flex; font-size:12px; color:var(--muted); margin-top:12px; }
+  .tl .months span { flex:1; }
+  .tl .pin { position:absolute; top:42px; transform:translateX(-50%); width:24px; height:24px; border-radius:50%; border:4px solid #fff; box-sizing:border-box; }
+  .tl .today { position:absolute; top:44px; left:0; width:4px; height:20px; border-radius:2px; background:var(--navy); }
+  .tl .lbl { position:absolute; top:0; transform:translateX(-50%); white-space:nowrap; font-size:13px; font-weight:700; background:#fff; padding:3px 9px; border-radius:8px; border:1px solid var(--line); }
+  .tl .lbl::after { content:''; position:absolute; left:50%; bottom:-7px; width:1px; height:6px; background:var(--line-strong); }
+  /* Cards */
+  .card { border-radius:20px; border:1px solid var(--line); background:#fff; padding:22px; }
+  .card.feature { border:2px solid var(--navy); }
+  .meta { color:var(--muted); font-size:15px; }
+  .fine { font-size:13px; color:var(--muted); }
+  .dot { display:inline-block; width:10px; height:10px; border-radius:50%; }
+  .row { display:flex; gap:14px; align-items:flex-start; padding:14px 0; border-top:1px solid var(--line); }
+  .date { width:56px; flex:none; text-align:center; }
+  .date b { display:block; font-family:var(--display); font-size:26px; line-height:1; }
+  .date span { font-size:12px; color:var(--muted); }
+  .bars { display:inline-flex; gap:3px; vertical-align:middle; }
+  .bars i { width:14px; height:8px; border-radius:2px; display:inline-block; }
+  .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .phone .steps { grid-template-columns:1fr; }
+  .step { border-radius:20px; padding:20px; background:var(--surface); }
+  .step .n { width:44px; height:44px; border-radius:14px; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:800; font-size:20px; margin-bottom:12px; }
+  .footer { background:var(--surface); border-top:1px solid var(--line); padding:20px 40px; font-size:13px; color:var(--muted); }
+  .phone .footer { padding:16px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .grow { animation: grow 600ms cubic-bezier(.2,.7,.2,1) both; transform-origin:left; }
+    @keyframes grow { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+  }
+</style>
+</head>
+<body>
+<p class="note"><b>Mockup for approval.</b> Direction B (bold blocks) with C (deadline timeline). Nothing in the app has changed. Figures are computed from the 5 EXAMPLE listings for an example founder. Hover nothing; this is static apart from the timeline and colors, which are drawn by the real <code>ramp()</code>.</p>
+
+<div class="board">
+
+<!-- ============ 1. Landing, laptop ============ -->
+<div>
+<p class="cap">1 · Landing page, laptop</p>
+<div class="screen desk">
+  <div class="hdr"><span class="logo" data-logo></span><nav class="nav"><a href="#">Funding map</a><a href="#">Find my funding</a><a href="#">Sign in</a></nav></div>
+  <section class="block" style="padding:64px 40px 56px">
+    <span class="shape" style="width:380px;height:380px;right:-90px;top:-120px;background:var(--navy)"></span>
+    <span class="shape" style="width:150px;height:150px;right:250px;bottom:-60px;background:var(--tint)"></span>
+    <span class="shape" style="width:64px;height:64px;right:200px;top:60px;background:#fff"></span>
+    <div class="content" style="max-width:640px">
+      <h1 style="font-size:64px">Find the funding you should apply for, and in what order.</h1>
+      <p style="font-size:20px;margin-top:18px;max-width:30em">Grants, pitch competitions, fellowships and programs for early-stage founders. Answer seven questions. See what fits, why, and what to do first. Free, and Seedline never takes a share of anything you win.</p>
+      <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap"><a class="btn primary" href="#">Find my funding</a><a class="btn ghost" href="#">Browse the funding map</a></div>
+    </div>
+  </section>
+  <section class="wrap" style="padding-top:44px;padding-bottom:20px">
+    <p class="fine" style="margin-bottom:10px">What your plan looks like (example founder, example programs)</p>
+    <div class="card" style="display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:center">
+      <div><p class="meta">Up to</p><h2 style="font-size:52px" data-total></h2><p class="meta" data-count></p></div>
+      <div class="tl" data-timeline="landing"></div>
+    </div>
+  </section>
+  <section class="wrap" style="padding-top:24px;padding-bottom:48px">
+    <h2 style="font-size:34px;margin-bottom:18px">How it works</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3 style="font-size:22px">Tell us the basics</h3><p class="meta" style="margin-top:6px">School, stage, sector, state. About two minutes, no account.</p></div>
+      <div class="step"><div class="n">2</div><h3 style="font-size:22px">See what fits and why</h3><p class="meta" style="margin-top:6px">Every match lists the rules you meet and what's missing.</p></div>
+      <div class="step"><div class="n">3</div><h3 style="font-size:22px">Apply in order</h3><p class="meta" style="margin-top:6px">Deadlines on a timeline, drafts from your saved answers, reminders.</p></div>
+    </div>
+  </section>
+  <div class="footer">Information only, not legal or investment advice. Always confirm details with the organizer.</div>
+</div>
+</div>
+
+<!-- ============ 2. Plan, laptop ============ -->
+<div>
+<p class="cap">2 · Plan page, laptop</p>
+<div class="screen desk">
+  <div class="hdr"><span class="logo" data-logo></span><nav class="nav"><a class="on" href="#">Plan</a><a href="#">Calendar</a><a href="#">Applications</a><a href="#">Materials</a><a href="#">Answers</a><a href="#">Funding map</a><a href="#">Profile</a></nav></div>
+  <section class="block" style="padding:40px 40px 36px">
+    <span class="shape" style="width:260px;height:260px;right:-70px;top:-110px;background:var(--navy)"></span>
+    <span class="shape" style="width:90px;height:90px;right:150px;bottom:-40px;background:var(--tint)"></span>
+    <div class="content" style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-end">
+      <div>
+        <p style="font-size:18px;font-weight:600">You're eligible for up to</p>
+        <h1 style="font-size:84px" data-total></h1>
+        <p style="font-size:18px;margin-top:6px" data-count></p>
+      </div>
+      <div style="background:#fff;border-radius:16px;padding:14px 18px;max-width:320px">
+        <p class="fine" style="color:var(--navy)"><b data-split></b></p>
+        <p class="fine" style="margin-top:4px">Founders rarely win everything. This is the most you could apply for.</p>
+      </div>
+    </div>
+  </section>
+  <section class="wrap" style="padding-top:34px">
+    <div style="display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between;align-items:baseline;margin-bottom:26px"><h2 style="font-size:28px">Your next 9 months</h2><span class="fine">Color shows how close each deadline is</span></div>
+    <div class="tl" data-timeline="plan" style="padding-bottom:40px"></div>
+  </section>
+  <section class="wrap" style="padding-top:22px;padding-bottom:10px">
+    <h2 style="font-size:34px;margin-bottom:16px">Apply now <span class="meta" style="font-family:var(--sans);font-size:18px;font-weight:600">(1)</span></h2>
+    <article class="card feature">
+      <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div><span class="chip type">University grant</span><h3 style="font-size:28px;margin-top:10px">EXAMPLE: Campus seed grant</h3><p class="meta" style="margin-top:4px">EXAMPLE: University venture office · $1,000 to $5,000</p></div>
+        <div style="text-align:right"><span class="chip" data-deadline-chip="36">Closes in 36 days</span></div>
+      </div>
+      <p style="margin-top:14px;font-size:16px"><b>Why it fits:</b> School is UNC Chapel Hill. Student status is Graduate student. Stage is Prototype (needs idea or later).</p>
+      <p style="margin-top:10px;font-size:15px"><span class="bars" data-bars="0,3"></span> 0 of 3 materials ready. Missing: one-pager, budget, faculty sponsor letter.</p>
+      <div style="margin-top:12px;font-size:14px"><p><b>Past results, from the organizer:</b> EXAMPLE: placeholder text showing where public results go. 3 awarded in 2025.</p><p><b>Founders like you, from Seedline:</b> Not enough data yet.</p></div>
+      <p class="fine" style="margin-top:8px">Source: <a href="#">example.com</a> · Last verified Oct 15, 2026</p>
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap"><a class="btn blue" href="#">Start draft</a><a class="btn line" href="#">Save to my applications</a></div>
+    </article>
+  </section>
+  <section class="wrap" style="padding-top:26px;padding-bottom:40px">
+    <h2 style="font-size:28px;margin-bottom:6px">Coming up <span class="meta" style="font-family:var(--sans);font-size:16px;font-weight:600">(1)</span></h2>
+    <div class="row">
+      <div class="date"><span>Feb</span><b>1</b></div>
+      <div style="flex:1"><span class="chip type2">Pitch competition</span><p style="font-weight:700;font-size:18px;margin-top:6px">EXAMPLE: Regional pitch night</p><p class="meta">Up to $10,000 · Opens Feb 1, 2027 (expected, from last cycle)</p>
+        <p class="fine" style="margin-top:6px">Past results, from the organizer: Not disclosed. · Founders like you, from Seedline: Not enough data yet.</p>
+        <p class="fine">Source: <a href="#">example.com</a> · Last verified Oct 15, 2026</p></div>
+    </div>
+  </section>
+  <div class="footer">Information only, not legal or investment advice. Always confirm details with the organizer.</div>
+</div>
+</div>
+
+<!-- ============ 3. Plan, phone ============ -->
+<div>
+<p class="cap">3 · Plan page, 375px</p>
+<div class="screen phone">
+  <div class="hdr"><span class="logo" data-logo></span><a class="btn line" style="min-height:44px;padding:0 14px" href="#">Menu</a></div>
+  <section class="block" style="padding:28px 16px 24px">
+    <span class="shape" style="width:160px;height:160px;right:-60px;top:-70px;background:var(--navy)"></span>
+    <div class="content">
+      <p style="font-size:16px;font-weight:600">You're eligible for up to</p>
+      <h1 style="font-size:56px" data-total></h1>
+      <p style="font-size:16px;margin-top:4px" data-count></p>
+      <p class="fine" style="color:var(--navy);margin-top:10px;font-weight:700" data-split></p>
+    </div>
+  </section>
+  <section class="wrap" style="padding-top:24px">
+    <h2 style="font-size:22px;margin-bottom:12px">Your next 9 months</h2>
+    <div data-timeline-list></div>
+  </section>
+  <section class="wrap" style="padding-top:18px;padding-bottom:24px">
+    <h2 style="font-size:26px;margin-bottom:12px">Apply now (1)</h2>
+    <article class="card feature" style="padding:16px">
+      <span class="chip type">University grant</span>
+      <h3 style="font-size:22px;margin-top:8px">EXAMPLE: Campus seed grant</h3>
+      <p class="meta" style="font-size:14px;margin-top:4px">$1,000 to $5,000</p>
+      <p style="margin-top:8px"><span class="chip" data-deadline-chip="36">Closes in 36 days</span></p>
+      <p style="margin-top:10px;font-size:15px"><b>Why it fits:</b> School is UNC Chapel Hill. Student status is Graduate student.</p>
+      <div style="margin-top:10px;font-size:13px"><p><b>Past results, from the organizer:</b> 3 awarded in 2025.</p><p><b>Founders like you, from Seedline:</b> Not enough data yet.</p></div>
+      <p class="fine" style="margin-top:6px">Source: <a href="#">example.com</a> · Last verified Oct 15, 2026</p>
+      <div style="display:grid;gap:8px;margin-top:14px"><a class="btn blue" style="justify-content:center" href="#">Start draft</a><a class="btn line" style="justify-content:center" href="#">Save to my applications</a></div>
+    </article>
+  </section>
+  <div class="footer">Information only, not legal or investment advice. Always confirm details with the organizer.</div>
+</div>
+</div>
+
+</div>
+
+<script>
+// The real ramp() from shared/ramp.ts, copied verbatim so the mockup's ordinal colors are exact.
+const RAMP_STOPS = [[19, 41, 75], [75, 156, 211], [242, 165, 65]];
+function ramp(t, alpha) {
+  const x = Math.max(0, Math.min(1, t)) * (RAMP_STOPS.length - 1);
+  const i = Math.min(RAMP_STOPS.length - 2, Math.floor(x));
+  const fr = x - i;
+  const c = RAMP_STOPS[i].map((v, k) => Math.round(v + (RAMP_STOPS[i + 1][k] - v) * fr));
+  return alpha === undefined ? `rgb(${c.join(',')})` : `rgba(${c.join(',')},${alpha})`;
+}
+const urgencyT = (days) => Math.max(0, Math.min(1, 1 - days / 60));
+
+// Example founder's eligible programs (from the 5 EXAMPLE listings), relative to Oct 15, 2026.
+const TODAY = new Date('2026-10-15T00:00:00Z');
+const items = [
+  { name: 'Campus seed grant', date: '2026-11-20', amount: 5000, open: true },
+  { name: 'Regional pitch night', date: '2027-03-15', opens: '2027-02-01', amount: 10000, open: false },
+];
+const days = (d) => Math.round((new Date(d + 'T00:00:00Z') - TODAY) / 86400000);
+const fmt = (n) => '$' + n.toLocaleString('en-US');
+const total = items.reduce((s, i) => s + i.amount, 0);
+const openNow = items.filter((i) => i.open).reduce((s, i) => s + i.amount, 0);
+
+document.querySelectorAll('[data-total]').forEach((e) => (e.textContent = fmt(total)));
+document.querySelectorAll('[data-count]').forEach((e) => (e.textContent = `across ${items.length} opportunities`));
+document.querySelectorAll('[data-split]').forEach((e) => (e.textContent = `${fmt(openNow)} open now · ${fmt(total - openNow)} opening later`));
+document.querySelectorAll('[data-logo]').forEach((e) => (e.innerHTML = '<svg aria-hidden="true" width="28" height="28" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#13294B"/><path d="M16 25V14" stroke="#4B9CD3" stroke-width="3" stroke-linecap="round"/><path d="M16 15c0-4 3-7 8-7 0 4-3 7-8 7zM16 18c0-3-2.5-5.5-6.5-5.5 0 3 2.5 5.5 6.5 5.5z" fill="#4B9CD3"/></svg>Seedline'));
+
+// Deadline chips: tint and dot from ramp(); text stays navy for contrast.
+document.querySelectorAll('[data-deadline-chip]').forEach((e) => {
+  const t = urgencyT(Number(e.dataset.deadlineChip));
+  e.style.background = ramp(t, 0.22);
+  e.style.color = '#13294b';
+  e.insertAdjacentHTML('afterbegin', `<i class="dot" style="background:${ramp(t)}"></i>`);
+});
+
+// Materials readiness bars: lower half of the ramp only (navy to Carolina blue).
+document.querySelectorAll('[data-bars]').forEach((e) => {
+  const [ready, required] = e.dataset.bars.split(',').map(Number);
+  e.innerHTML = Array.from({ length: required }, (_, i) => `<i style="background:${i < ready ? ramp(0.5 * ready / required) : 'var(--line)'}"></i>`).join('');
+});
+
+// C: the 9-month rail. One segment per week, each colored by how close that week is (ramp).
+const WEEKS = 39;
+const SPAN = 273; // about 9 months in days
+function drawTimeline(el, compact) {
+  // A light tint of the ramp for the rail; full-strength ramp color for the pins.
+  const rail = Array.from({ length: WEEKS }, (_, w) => `<span style="background:${ramp(urgencyT(w * 7), 0.3)}"></span>`).join('');
+  const months = Array.from({ length: 9 }, (_, m) => {
+    const d = new Date(TODAY); d.setUTCMonth(d.getUTCMonth() + m);
+    return `<span>${d.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' })}</span>`;
+  }).join('');
+  const pins = items.map((i) => {
+    const pct = Math.min(100, (days(i.date) / SPAN) * 100);
+    const color = ramp(urgencyT(days(i.date)));
+    return `<span class="pin" style="left:${pct}%;background:${color}"></span><span class="lbl" style="left:${pct}%">${i.name} · ${new Date(i.date + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}${i.opens ? ' (expected)' : ''}</span>`;
+  }).join('');
+  el.innerHTML = `<div class="rail grow">${rail}</div><span class="today" title="Today"></span>${pins}<div class="months"><span style="font-weight:700;color:var(--navy);padding-left:2px">Today</span>${months.replace(/^<span>[^<]*<\/span>/, '')}</div>`;
+}
+document.querySelectorAll('[data-timeline]').forEach((el) => drawTimeline(el));
+
+// On a phone, the timeline becomes a vertical list with the same ramp colors.
+document.querySelectorAll('[data-timeline-list]').forEach((el) => {
+  el.innerHTML = items.map((i) => {
+    const d = days(i.date);
+    return `<div class="row"><div class="date"><span>${new Date(i.date + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' })}</span><b>${new Date(i.date + 'T00:00:00Z').getUTCDate()}</b></div>
+      <div style="flex:1"><p style="font-weight:700">${i.name}</p><p class="fine"><i class="dot" style="background:${ramp(urgencyT(d))};margin-right:6px"></i>Closes in ${d} days${i.opens ? ' (expected)' : ''}</p></div></div>`;
+  }).join('');
+});
+</script>
+</body>
+</html>
