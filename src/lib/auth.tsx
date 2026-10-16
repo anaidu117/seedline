@@ -27,7 +27,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
+      // Supabase fires events on tab focus and token refresh. Keep the same object when nothing changed,
+      // so pages keyed on the session do not reload and overwrite what the founder is typing.
+      setSession((prev) => (prev?.access_token === s?.access_token && prev?.user.id === s?.user.id ? prev : s));
       setLoading(false);
     });
     return () => { active = false; sub.subscription.unsubscribe(); };

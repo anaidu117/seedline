@@ -67,7 +67,12 @@ export interface FounderData {
   today: string;
 }
 
-export async function loadFounder(userId: string): Promise<FounderData> {
+/**
+ * Loads everything for a founder. Only the plan and profile pages pass `updateSnapshot`, so visiting
+ * another page never marks "Newly unlocked" as seen.
+ */
+export async function loadFounder(userId: string, opts: { updateSnapshot?: boolean } = {}): Promise<FounderData> {
+  const updateSnapshot = opts.updateSnapshot ?? true;
   const profileRow = await ensureProfile(userId);
   const [groupsRes, opportunities, materialsRes, appsRes, snapRes] = await Promise.all([
     supabase.from('profile_founder_groups').select('groups, prefer_not_to_say').eq('user_id', userId).maybeSingle(),
@@ -84,7 +89,9 @@ export async function loadFounder(userId: string): Promise<FounderData> {
   const statuses = planStatuses(plan);
   const before = (snapRes.data?.statuses as Record<string, PlanGroup> | undefined) ?? null;
   const unlocked = before ? newlyUnlocked(before, statuses) : [];
-  if (!before) {
+  if (!updateSnapshot) {
+    // Read-only view of the plan.
+  } else if (!before) {
     // Insert, not upsert: if two loads race, only the one that creates the first snapshot records the event.
     const first = await supabase.from('plan_snapshots').insert({ user_id: userId, statuses });
     if (!first.error) void track('plan_generated', { school: profile.school, sector: profile.sector });
@@ -95,18 +102,19 @@ export async function loadFounder(userId: string): Promise<FounderData> {
     profileRow, groups, profile, opportunities,
     materials: new Set((materialsRes.data ?? []).map((m) => m.material_key as MaterialKey)),
     applications: new Map((appsRes.data as ApplicationRow[] ?? []).map((a) => [a.opportunity_id, a])),
-    plan, totals: computeTotals(plan), unlock: nextUnlock(opportunities, profile, today), unlocked,
-    firstPlan: !before, today,
+    plan, totals: computeTotals(plan), unlock: nextUnlock(opportunities, profile, today), unlocked: updateSnapshot ? unlocked : [],
+    firstPlan: updateSnapshot && !before, today,
   };
 }
 
-export function useFounder(userId: string | undefined) {
+export function useFounder(userId: string | undefined, opts: { updateSnapshot?: boolean } = {}) {
   const [data, setData] = useState<FounderData | null>(null);
   const [error, setError] = useState('');
+  const updateSnapshot = opts.updateSnapshot ?? true;
   const reload = useCallback(async () => {
     if (!userId) return;
-    try { setData(await loadFounder(userId)); setError(''); } catch (e) { setError((e as Error).message); }
-  }, [userId]);
+    try { setData(await loadFounder(userId, { updateSnapshot })); setError(''); } catch (e) { setError((e as Error).message); }
+  }, [userId, updateSnapshot]);
   useEffect(() => { void reload(); }, [reload]);
   return { data, error, reload, setData };
 }
