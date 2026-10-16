@@ -70,7 +70,8 @@ Notes:
 
 | Command | What it runs |
 |---|---|
-| `npm test` | Unit tests for `shared/` (vocabulary, matching, ramp, CSV, drafts, `.ics`, tokens, map filters). |
+| `npm test` | Unit tests for `shared/` (vocabulary, matching, ramp, CSV, drafts, `.ics`, tokens, map filters) and the `_redirects` route check. |
+| `npm run check:functions` | Type-checks every Edge Function with Deno. |
 | `npm run test:db` | RLS, storage, database and Edge Function tests against the local stack. Needs Supabase and `functions serve` running. |
 | `npm run test:e2e` | Browser tests: the full founder flow, plus every route measured at 375px and 1280px for overflow, tap targets, focus, color contrast (axe) and copy rules. Needs everything running. Run `npx playwright install chromium` once first. |
 | `npm run contrast` | Measures every text and color pair from the CSS tokens against 4.5:1 (3:1 for control borders). |
@@ -107,6 +108,9 @@ Server only (Supabase Edge Function secrets, never in frontend code):
 ## Supabase setup (production)
 
 1. Create the project. In Authentication, enable email sign-in. Under URL configuration, set the site URL to your domain and add `https://yourdomain.com/**` and `http://localhost:5173/**` as redirect URLs.
+   - Keep **Confirm email** on (Authentication, then Providers, then Email). Magic links confirm the address themselves.
+   - **Magic links only:** after `db push` (step 3), go to Authentication, then Hooks, and enable the **Customize Access Token** hook with the Postgres function `public.custom_access_token_hook`. It refuses any token issued for a password sign-in. Without it, someone could create a password account directly against the Auth API.
+   - **Email templates:** in Authentication, then Email Templates, paste `supabase/templates/magic_link.html` into "Magic Link" (subject "Your Seedline sign-in link") and `supabase/templates/confirmation.html` into "Confirm signup" (subject "Confirm your email to see your Seedline plan"). Locally these are set in `config.toml`.
 2. Set custom SMTP to Resend (Authentication, then SMTP settings), so sign-in emails are not limited by Supabase's built-in sender.
 3. Link and push the schema (you will be asked for the database password):
 

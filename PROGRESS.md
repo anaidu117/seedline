@@ -42,10 +42,20 @@ Plan approved 2026-10-15 with every suggested default in PLAN.md section 5. Admi
 
 - **QA fix after step 20:** "Past results and founders-like-you are separate lines on every card" was only true on the detail page. Apply now cards now show both lines, with founders-like-you fetched for all cards at once by `founders_like_you_many` (same 10-report threshold in SQL, tested at 9 and 10). Preview cards say to sign in for founders-like-you, since anonymous visitors cannot query it. The browser flow asserts both lines on every plan card.
 
+## Audit fixes (prompt 5), in order of severity, each with its own commit
+1. **Password sign-up was possible through the Auth API** (and with email confirmation off locally, an instant password account on an admin email would have been an admin). Fixed: custom access token hook refuses password tokens; `is_admin()` and Edge Function identity require a confirmed email; local email confirmation on, as in production. `tests/rls/auth.test.ts` 4 of 4 (password sign-in refused with the hook's message, magic link still works, unconfirmed admin email is not admin).
+2. **Check-in emails could name a listing that is unverified or archived.** Fixed in `send-checkins`. New test fails without the fix and passes with it.
+3. **Source, last verified and the two results lines were missing on plan rows (Coming up, Not ready yet, Needs info, equity, targeted), map entries and shared plans.** Fixed, with founders-like-you fetched once per page (`founders_like_you_many`, 10-report threshold in SQL). Browser test checks every listing on the plan, map and shared plan; it fails against the old map code.
+4. **Edge Functions were never type-checked.** Added `npm run check:functions` (Deno). It found and I fixed a loose `Uint8Array` type in password hashing.
+5. **Sign-in emails used Supabase's generic template.** Seedline templates for "magic link" and "confirm signup"; test checks both subjects and bodies.
+6. **Unknown URLs returned 200.** `_redirects` now lists each route, `404.html` is generated, so unknown paths get a real 404 on Pages (verified with `wrangler pages dev`: routes 200, unknown 404). Unit test keeps `_redirects` in sync with the router.
+7. **Smaller fixes:** nav shows founder pages only when signed in, with an Admin link for admins; Escape closes the mobile menu and returns focus; map filters fold away on phones; landing copy no longer says the ambiguous "No equity, no fees"; fit reasons use the founder's own answer; Not ready yet rows with unanswered questions get "Answer in profile". `tests/e2e/navigation.spec.ts` covers the first three.
+
 ## Final numbers (from the last full run, `npm run qa`)
-- `npm test`: 110 of 110 (8 files)
-- `npm run test:db`: 91 of 91 (8 files: RLS, storage, enums, metrics, CSV import, emails and check-ins, share links, submissions and claims)
-- `npm run test:e2e`: 7 passed, 1 skipped by design (the founder flow runs at laptop width only)
+- `npm test`: 115 of 115 (9 files)
+- `npm run check:functions`: all 12 Edge Functions type-check
+- `npm run test:db`: 98 of 98 (10 files)
+- `npm run test:e2e`: 12 passed, 2 skipped by design (founder flow runs at laptop width only; the menu test runs on mobile only)
 - `npm run build`: passes; CSP has no `unsafe-` directive
 - Local database reset to the clean seed afterwards: 5 EXAMPLE rows, all unverified, no users.
 
